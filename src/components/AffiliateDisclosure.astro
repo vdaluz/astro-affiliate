@@ -1,0 +1,22 @@
+---
+import type { AffiliateConfig } from '../lib/types';
+
+interface Props {
+  config: AffiliateConfig;
+  /** Post's `affiliates:` frontmatter array. */
+  affiliates: string[];
+  class?: string;
+}
+
+const { config, affiliates, class: className } = Astro.props;
+
+const disclosures = affiliates
+  .map((name) => config.programs[name]?.disclosure)
+  .filter((text): text is string => Boolean(text));
+---
+
+{
+  disclosures.length > 0 && (
+    <p class={className ?? 'text-sm text-muted italic'}>{disclosures.join(' ')}</p>
+  )
+}

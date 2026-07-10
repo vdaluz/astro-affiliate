@@ -1,0 +1,18 @@
+---
+import type { AffiliateConfig } from '../lib/types';
+import { resolveAffiliate } from '../lib/resolve';
+
+interface Props {
+  config: AffiliateConfig;
+  /** 'program.itemKey', e.g. 'amazon.atomicHabits'. */
+  affiliateKey: string;
+  class?: string;
+}
+
+const { config, affiliateKey, class: className } = Astro.props;
+const { url } = resolveAffiliate(config, affiliateKey);
+---
+
+<a href={url} target="_blank" rel="noopener noreferrer sponsored" class={className}>
+  <slot />
+</a>

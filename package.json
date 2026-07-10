@@ -1,0 +1,19 @@
+{
+  "name": "@vdaluz/astro-affiliate",
+  "version": "0.1.0",
+  "description": "Shared affiliate-link catalog resolver and disclosure components for vdaluz.com-family sites.",
+  "type": "module",
+  "license": "MIT",
+  "files": [
+    "src"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./remark": "./src/lib/remark.ts",
+    "./AffiliateLink.astro": "./src/components/AffiliateLink.astro",
+    "./AffiliateDisclosure.astro": "./src/components/AffiliateDisclosure.astro"
+  },
+  "peerDependencies": {
+    "astro": ">=6.0.0"
+  }
+}
