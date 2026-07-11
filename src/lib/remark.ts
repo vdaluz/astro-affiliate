@@ -39,7 +39,7 @@ function collectAffiliateLinkNodes(node: MdastNode, out: MdastNode[]) {
  *   import { remarkAffiliate } from '@vdaluz/astro-affiliate/remark';
  *
  *   export default defineConfig({
- *     markdown: { remarkPlugins: [remarkAffiliate(affiliate)] },
+ *     markdown: { remarkPlugins: [[remarkAffiliate, affiliate]] },
  *   });
  */
 export function remarkAffiliate(config: AffiliateConfig) {

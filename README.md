@@ -72,10 +72,17 @@ import { affiliate } from './src/config/affiliate';
 
 export default defineConfig({
   markdown: {
-    remarkPlugins: [remarkAffiliate(affiliate)],
+    remarkPlugins: [[remarkAffiliate, affiliate]],
   },
 });
 ```
+
+> **Use the `[plugin, options]` tuple, not `remarkAffiliate(affiliate)` pre-invoked.** Astro/unified
+> calls the plugin function itself with the options; passing an already-invoked transformer means
+> unified calls *that* with no arguments as if it were the attacher, which silently no-ops instead
+> of rewriting anything - the build stays green with `affiliate:key` links left untouched in the
+> output. Always verify by checking rendered HTML for the real resolved URL, not just a passing
+> build.
 
 Then in a post's markdown body:
 
