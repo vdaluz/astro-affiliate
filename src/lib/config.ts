@@ -1,24 +1,27 @@
 import type { AffiliateConfig } from './types';
 
 /**
- * Identity function for authoring a site's affiliate catalog with type checking
+ * Identity function for authoring a site's affiliate config with type checking
  * and editor autocomplete. Use in the consuming app's affiliate config:
  *
  *   import { defineAffiliateConfig } from '@vdaluz/astro-affiliate';
  *
- *   export const affiliateConfig = defineAffiliateConfig({
+ *   export const affiliate = defineAffiliateConfig({
  *     programs: {
  *       amazon: {
  *         kind: 'amazon',
  *         tag: 'vdaluz-20',
  *         disclosure: 'As an Amazon Associate, I earn from qualifying purchases.',
- *         items: { atomicHabits: 'B07RFSSYBH' },
  *       },
  *       proton: {
  *         kind: 'links',
  *         disclosure: 'As a Proton Partner, I earn from qualifying purchases.',
- *         items: { pass: 'https://go.getproton.me/SH2FI' },
+ *         links: { pass: 'https://go.getproton.me/SH2FI' },
  *       },
+ *     },
+ *     catalog: {
+ *       atomicHabits: { program: 'amazon', asin: 'B07RFSSYBH' },
+ *       protonPass: { program: 'proton', link: 'pass' },
  *     },
  *   });
  */

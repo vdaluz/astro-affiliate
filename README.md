@@ -1,6 +1,6 @@
 # @vdaluz/astro-affiliate
 
-Shared affiliate-link catalog resolver and disclosure components for vdaluz.com-family sites. Ships raw `.astro` and `.ts` — the consuming app's Astro/Vite compiles them (no prebuild step). Machinery only: the package carries no affiliate data itself, each site supplies its own catalog, tracking tags, and disclosure text via config.
+Shared affiliate-link catalog resolver and disclosure components for vdaluz.com-family sites. Ships raw `.astro` and `.ts` - the consuming app's Astro/Vite compiles them (no prebuild step). Machinery only: the package carries no affiliate data itself, each site supplies its own catalog, tracking tags, and disclosure text via config.
 
 ## Install
 
@@ -9,53 +9,56 @@ Pinned https tarball from a tag (no registry needed):
 ```jsonc
 // package.json
 "dependencies": {
-  "@vdaluz/astro-affiliate": "https://github.com/vdaluz/astro-affiliate/archive/refs/tags/v0.1.0.tar.gz"
+  "@vdaluz/astro-affiliate": "https://github.com/vdaluz/astro-affiliate/archive/refs/tags/v0.2.0.tar.gz"
 }
 ```
 
-> **Why a tarball, not `github:vdaluz/astro-affiliate#v0.1.0`?** npm canonicalizes GitHub
+> **Why a tarball, not `github:vdaluz/astro-affiliate#v0.2.0`?** npm canonicalizes GitHub
 > shorthand (and even an explicit `git+https://` URL) to `git+ssh://` in the lockfile.
 > CI runners (e.g. Cloudflare Pages/Workers) have no SSH key, so `npm ci` would fail to
 > clone it. The `/archive/refs/tags/<tag>.tar.gz` URL is anonymous https with an integrity
-> hash in the lockfile — it just works in CI. Bump the tag in the URL to upgrade.
+> hash in the lockfile, it just works in CI. Bump the tag in the URL to upgrade.
 
 Peer dependency: `astro` >= 6.
 
-## Define your catalog
+## Define your config
+
+Two top-level pieces: `programs` (disclosure text + how to resolve a program's links) and
+`catalog` (a single flat list of every item, each pointing at the program that resolves it).
 
 ```ts
 // src/config/affiliate.ts
 import { defineAffiliateConfig } from '@vdaluz/astro-affiliate';
 
-export const affiliateConfig = defineAffiliateConfig({
+export const affiliate = defineAffiliateConfig({
   programs: {
     amazon: {
       kind: 'amazon',
       tag: 'vdaluz-20',
       disclosure: 'As an Amazon Associate, I earn from qualifying purchases.',
-      items: {
-        atomicHabits: 'B07RFSSYBH',
-      },
     },
     proton: {
       kind: 'links',
       disclosure: 'As a Proton Partner, I earn from qualifying purchases.',
-      items: {
-        pass: 'https://go.getproton.me/SH2FI',
-      },
+      links: { pass: 'https://go.getproton.me/SH2FI' },
     },
+  },
+  catalog: {
+    atomicHabits: { program: 'amazon', asin: 'B07RFSSYBH' },
+    protonPass: { program: 'proton', link: 'pass' },
   },
 });
 ```
 
 Two program kinds:
 
-- **`amazon`** — supply a site tag once; each item is just an ASIN. The URL is constructed as
-  `https://www.amazon.com/dp/<ASIN>/ref=nosim?tag=<tag>`.
-- **`links`** — a flat item-key-to-URL map, for Proton, AdGuard, or any other referral program.
+- **`amazon`** - supply a site tag once; catalog entries reference it with just an ASIN. The URL
+  is constructed as `https://www.amazon.com/dp/<ASIN>/ref=nosim?tag=<tag>`.
+- **`links`** - a flat link-key-to-URL map on the program; catalog entries reference one of those
+  keys.
 
-Every key used anywhere (markdown links, `<AffiliateLink>`) is `program.itemKey`, e.g.
-`amazon.atomicHabits` or `proton.pass`.
+Catalog keys are flat and unprefixed (`atomicHabits`, not `amazon.atomicHabits`) - that's what
+markdown links and `<AffiliateLink>` use directly.
 
 ## Markdown links (`remarkAffiliate`)
 
@@ -63,11 +66,11 @@ Wire the plugin into `astro.config.mjs`:
 
 ```js
 import { remarkAffiliate } from '@vdaluz/astro-affiliate/remark';
-import { affiliateConfig } from './src/config/affiliate';
+import { affiliate } from './src/config/affiliate';
 
 export default defineConfig({
   markdown: {
-    remarkPlugins: [remarkAffiliate(affiliateConfig)],
+    remarkPlugins: [remarkAffiliate(affiliate)],
   },
 });
 ```
@@ -80,13 +83,13 @@ title: My post
 affiliates: [amazon]
 ---
 
-I use [Atomic Habits](affiliate:amazon.atomicHabits) to stay on track.
+I use [Atomic Habits](affiliate:atomicHabits) to stay on track.
 ```
 
-`affiliate:amazon.atomicHabits` is rewritten to the real resolved URL at build time. An unknown
-key fails the build. **Compliance by construction:** every program actually used by `affiliate:`
+`affiliate:atomicHabits` is rewritten to the real resolved URL at build time. An unknown key
+fails the build. **Compliance by construction:** every program actually used by `affiliate:`
 links in a post must be declared in that post's `affiliates:` frontmatter array, or the build
-fails with a clear error — there's no way to ship an affiliate link without its disclosure.
+fails with a clear error - there's no way to ship an affiliate link without its disclosure.
 
 ## `.astro` pages (`<AffiliateLink>`)
 
@@ -95,10 +98,10 @@ For gear pages or other non-markdown content:
 ```astro
 ---
 import AffiliateLink from '@vdaluz/astro-affiliate/AffiliateLink.astro';
-import { affiliateConfig } from '../config/affiliate';
+import { affiliate } from '../config/affiliate';
 ---
 
-<AffiliateLink config={affiliateConfig} affiliateKey="amazon.atomicHabits">
+<AffiliateLink config={affiliate} affiliateKey="atomicHabits">
   Atomic Habits
 </AffiliateLink>
 ```
@@ -113,23 +116,24 @@ above the fold):
 ```astro
 ---
 import AffiliateDisclosure from '@vdaluz/astro-affiliate/AffiliateDisclosure.astro';
-import { affiliateConfig } from '../config/affiliate';
+import { affiliate } from '../config/affiliate';
 
 const { affiliates = [] } = entry.data;
 ---
 
-<AffiliateDisclosure config={affiliateConfig} affiliates={affiliates} />
+<AffiliateDisclosure config={affiliate} affiliates={affiliates} />
 ```
 
 Renders one paragraph joining the disclosure text for every program in `affiliates`, or nothing
-if the array is empty. Default styling is `text-sm text-muted italic` — pass `class` to override;
+if the array is empty. Default styling is `text-sm text-muted italic`; pass `class` to override,
 see [Per-app glue](#per-app-glue) for the token variables this assumes.
 
 ## Per-app glue
 
 This is a component library, not a drop-in catalog. Each consuming app owns:
 
-- Its own `affiliateConfig` (catalog, tags, disclosure text) — nothing is shared across sites.
+- Its own `affiliate` config (programs, catalog, tags, disclosure text). Nothing is shared across
+  sites.
 - The `affiliates:` field in its content collection schema (add `affiliates: z.array(z.string()).optional()`).
 - Token CSS variables referenced by the default disclosure styling: `muted`. See
   [`@vdaluz/astro-blog`'s `tokens.example.css`](https://github.com/vdaluz/astro-blog) for the
@@ -143,7 +147,7 @@ Tag-pinned tarballs, no registry:
    consumers locally), `astro check && astro build`.
 2. Bump `version` in `package.json`, commit.
 3. Tag `vX.Y.Z` and push the tag. **The tag must be public before any consumer CI references
-   it** — the tarball URL 404s otherwise.
+   it**, the tarball URL 404s otherwise.
 4. Bump the tag in each consumer's `package.json` dependency URL.
 
 ## Consumers

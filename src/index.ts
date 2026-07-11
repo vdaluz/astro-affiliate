@@ -5,5 +5,8 @@ export type {
   AffiliateProgram,
   AffiliateProgramAmazon,
   AffiliateProgramLinks,
+  CatalogEntry,
+  CatalogEntryAmazon,
+  CatalogEntryLink,
   ResolvedAffiliate,
 } from './lib/types';

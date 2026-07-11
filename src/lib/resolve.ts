@@ -1,37 +1,50 @@
 import type { AffiliateConfig, ResolvedAffiliate } from './types';
 
 /**
- * Resolves a `program.itemKey` key (e.g. 'amazon.atomicHabits', 'proton.pass')
- * against a site's affiliate config into a real URL. Throws on an unknown
- * program or item - an unresolvable affiliate link is a build failure, not a
- * silently broken link.
+ * Resolves a flat catalog key (e.g. 'atomicHabits', 'protonPass') against a
+ * site's affiliate config into a real URL. Throws on an unknown key, an
+ * unknown program, or a catalog entry/program kind mismatch - an unresolvable
+ * affiliate link is a build failure, not a silently broken link.
  */
 export function resolveAffiliate(config: AffiliateConfig, key: string): ResolvedAffiliate {
-  const dotIndex = key.indexOf('.');
-  if (dotIndex === -1) {
+  const entry = config.catalog[key];
+  if (!entry) {
     throw new Error(
-      `Invalid affiliate key "${key}": expected "program.itemKey" (e.g. "amazon.atomicHabits").`
+      `Unknown affiliate catalog key "${key}". Known keys: ${Object.keys(config.catalog).join(', ') || '(none configured)'}.`
     );
   }
 
-  const programName = key.slice(0, dotIndex);
-  const itemKey = key.slice(dotIndex + 1);
-  const program = config.programs[programName];
+  const program = config.programs[entry.program];
   if (!program) {
-    throw new Error(
-      `Unknown affiliate program "${programName}" in key "${key}". Known programs: ${Object.keys(config.programs).join(', ') || '(none configured)'}.`
-    );
+    throw new Error(`Catalog key "${key}" references unknown program "${entry.program}".`);
   }
 
-  const item = program.items[itemKey];
-  if (!item) {
-    throw new Error(
-      `Unknown affiliate item "${itemKey}" for program "${programName}" in key "${key}".`
-    );
+  if ('asin' in entry) {
+    if (program.kind !== 'amazon') {
+      throw new Error(
+        `Catalog key "${key}" has an "asin" field, but program "${entry.program}" is kind "${program.kind}", not "amazon".`
+      );
+    }
+    return {
+      url: `https://www.amazon.com/dp/${entry.asin}/ref=nosim?tag=${program.tag}`,
+      program: entry.program,
+    };
   }
 
-  const url =
-    program.kind === 'amazon' ? `https://www.amazon.com/dp/${item}/ref=nosim?tag=${program.tag}` : item;
+  if ('link' in entry) {
+    if (program.kind !== 'links') {
+      throw new Error(
+        `Catalog key "${key}" has a "link" field, but program "${entry.program}" is kind "${program.kind}", not "links".`
+      );
+    }
+    const url = program.links[entry.link];
+    if (!url) {
+      throw new Error(
+        `Catalog key "${key}" references unknown link "${entry.link}" in program "${entry.program}".`
+      );
+    }
+    return { url, program: entry.program };
+  }
 
-  return { url, program: programName };
+  throw new Error(`Catalog key "${key}" has neither "asin" nor "link".`);
 }

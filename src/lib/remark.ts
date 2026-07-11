@@ -30,16 +30,16 @@ function collectAffiliateLinkNodes(node: MdastNode, out: MdastNode[]) {
 }
 
 /**
- * Remark plugin: rewrites `[text](affiliate:program.itemKey)` links to their
- * real resolved URL at build time, and enforces FTC compliance by construction
- * - every program actually used by a post must be declared in that post's
+ * Remark plugin: rewrites `[text](affiliate:catalogKey)` links to their real
+ * resolved URL at build time, and enforces FTC compliance by construction -
+ * every program actually used by a post must be declared in that post's
  * `affiliates:` frontmatter (so `<AffiliateDisclosure>` knows to render it).
  * An unknown key, or a used program missing from frontmatter, fails the build.
  *
  *   import { remarkAffiliate } from '@vdaluz/astro-affiliate/remark';
  *
  *   export default defineConfig({
- *     markdown: { remarkPlugins: [remarkAffiliate(affiliateConfig)] },
+ *     markdown: { remarkPlugins: [remarkAffiliate(affiliate)] },
  *   });
  */
 export function remarkAffiliate(config: AffiliateConfig) {
