@@ -23,6 +23,8 @@ export interface CatalogEntryAmazon {
   /** Name of a 'amazon'-kind program in `programs`. */
   program: string;
   asin: string;
+  /** Free-form grouping for site-side filtering (e.g. a /gear page), not used by resolution. */
+  category?: string;
 }
 
 export interface CatalogEntryLink {
@@ -30,6 +32,8 @@ export interface CatalogEntryLink {
   program: string;
   /** Key into that program's `links` map. */
   link: string;
+  /** Free-form grouping for site-side filtering (e.g. a /gear page), not used by resolution. */
+  category?: string;
 }
 
 export type CatalogEntry = CatalogEntryAmazon | CatalogEntryLink;

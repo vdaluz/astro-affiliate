@@ -58,7 +58,9 @@ Two program kinds:
   keys.
 
 Catalog keys are flat and unprefixed (`atomicHabits`, not `amazon.atomicHabits`) - that's what
-markdown links and `<AffiliateLink>` use directly.
+markdown links and `<AffiliateLink>` use directly. Each entry accepts an optional `category`
+string, ignored by resolution, for a consuming app's own filtering (e.g. a gear page listing only
+`category: 'gear'` entries).
 
 ## Markdown links (`remarkAffiliate`)
 

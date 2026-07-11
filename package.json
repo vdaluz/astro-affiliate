@@ -1,6 +1,6 @@
 {
   "name": "@vdaluz/astro-affiliate",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Shared affiliate-link catalog resolver and disclosure components for vdaluz.com-family sites.",
   "type": "module",
   "license": "MIT",
