@@ -1,3 +1,5 @@
+import type { Localized } from './i18n';
+
 /**
  * Amazon Associates program. `resolveAffiliate` constructs the manual-link URL
  * from `tag` and a catalog entry's ASIN: `https://www.amazon.com/dp/<ASIN>/ref=nosim?tag=<tag>`.
@@ -7,13 +9,13 @@ export interface AffiliateProgramAmazon {
   /** Associates tracking ID for this site, e.g. 'vdaluz-20'. */
   tag: string;
   /** FTC disclosure text rendered by <AffiliateDisclosure> for this program. */
-  disclosure: string;
+  disclosure: Localized;
 }
 
 /** A flat link-key -> URL program (Proton, AdGuard, future one-off referral links). */
 export interface AffiliateProgramLinks {
   kind: 'links';
-  disclosure: string;
+  disclosure: Localized;
   links: Record<string, string>;
 }
 

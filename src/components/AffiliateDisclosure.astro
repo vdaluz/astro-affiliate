@@ -1,18 +1,21 @@
 ---
 import type { AffiliateConfig } from '../lib/types';
+import { resolveLocalized } from '../lib/i18n';
 
 interface Props {
   config: AffiliateConfig;
   /** Post's `affiliates:` frontmatter array. */
   affiliates: string[];
   class?: string;
+  locale?: string;
 }
 
-const { config, affiliates, class: className } = Astro.props;
+const { config, affiliates, class: className, locale } = Astro.props;
 
 const disclosures = affiliates
   .map((name) => config.programs[name]?.disclosure)
-  .filter((text): text is string => Boolean(text));
+  .filter((text): text is NonNullable<typeof text> => Boolean(text))
+  .map((text) => resolveLocalized(text, locale));
 ---
 
 {
