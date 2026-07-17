@@ -161,5 +161,5 @@ Tag-pinned tarballs, no registry:
 
 ## Consumers
 
-- vdaluz.com
-- imperfectsystems.com
+- [vdaluz.com](https://vdaluz.com)
+- [imperfectsystems.com](https://imperfectsystems.com)
