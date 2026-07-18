@@ -9,7 +9,7 @@ Pinned https tarball from a tag (no registry needed):
 ```jsonc
 // package.json
 "dependencies": {
-  "@vdaluz/astro-affiliate": "https://github.com/vdaluz/astro-affiliate/archive/refs/tags/v0.2.0.tar.gz"
+  "@vdaluz/astro-affiliate": "https://github.com/vdaluz/astro-affiliate/archive/refs/tags/v0.4.0.tar.gz"
 }
 ```
 
@@ -61,6 +61,46 @@ Catalog keys are flat and unprefixed (`atomicHabits`, not `amazon.atomicHabits`)
 markdown links and `<AffiliateLink>` use directly. Each entry accepts an optional `category`
 string, ignored by resolution, for a consuming app's own filtering (e.g. a gear page listing only
 `category: 'gear'` entries).
+
+## Per-channel tags (reposts, syndication)
+
+A program can declare a different tag/link for a named channel - e.g. a distinct Amazon tracking
+ID for content republished to Medium, so Associates reporting can tell channel traffic apart from
+the canonical site (Amazon's own tracking IDs exist for exactly this: up to 100 per account,
+independently reportable):
+
+```ts
+programs: {
+  amazon: {
+    kind: 'amazon',
+    tag: 'vdaluz-20',
+    channelTags: { medium: 'vdaluz-medium-20' },
+    disclosure: '...',
+  },
+  proton: {
+    kind: 'links',
+    disclosure: '...',
+    links: { pass: 'https://go.getproton.me/SH2FI' },
+    channelLinks: { medium: { pass: 'https://go.getproton.me/MEDIUM' } },
+  },
+},
+```
+
+A channel not listed in `channelTags`/`channelLinks` falls back to the program's default - passing
+an unconfigured channel is a no-op, not an error.
+
+Two ways to consume a channel, depending on where the affiliate link lives:
+
+- **`resolveAffiliate(config, key, channel)`** - pass the channel directly when resolving at
+  request/render time (e.g. inside a non-prerendered `.astro` page or component).
+- **`rewriteAffiliateLinksForChannel(content, config, channel)`** - for content whose affiliate
+  links were already resolved to the default channel at build time (markdown `affiliate:key` links
+  compiled once via `remarkAffiliate`, baked into a prerendered page). Retargets the rendered
+  output after the fact - via a middleware, an edge function, or whatever else drives the specific
+  repost flow - by exact string substitution of each catalog entry's default URL, not a generic
+  regex, so it can't accidentally touch unrelated content. `buildChannelRewriteMap(config, channel)`
+  exposes the underlying default-URL -> channel-URL map directly, for callers that want to do their
+  own substitution.
 
 ## Markdown links (`remarkAffiliate`)
 

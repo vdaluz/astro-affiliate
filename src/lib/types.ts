@@ -1,4 +1,4 @@
-import type { Localized } from './i18n';
+import type { Localized } from './i18n.ts';
 
 /**
  * Amazon Associates program. `resolveAffiliate` constructs the manual-link URL
@@ -8,6 +8,11 @@ export interface AffiliateProgramAmazon {
   kind: 'amazon';
   /** Associates tracking ID for this site, e.g. 'vdaluz-20'. */
   tag: string;
+  /**
+   * Optional per-channel tracking ID overrides (e.g. `{ medium: 'vdaluz-medium-20' }`
+   * for a distinct tag on Medium reposts). A channel not listed here falls back to `tag`.
+   */
+  channelTags?: Record<string, string>;
   /** FTC disclosure text rendered by <AffiliateDisclosure> for this program. */
   disclosure: Localized;
 }
@@ -17,6 +22,11 @@ export interface AffiliateProgramLinks {
   kind: 'links';
   disclosure: Localized;
   links: Record<string, string>;
+  /**
+   * Optional per-channel URL overrides, keyed by channel then link key. A
+   * channel/link-key combination not listed here falls back to `links`.
+   */
+  channelLinks?: Record<string, Record<string, string>>;
 }
 
 export type AffiliateProgram = AffiliateProgramAmazon | AffiliateProgramLinks;

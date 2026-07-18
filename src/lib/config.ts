@@ -1,4 +1,4 @@
-import type { AffiliateConfig } from './types';
+import type { AffiliateConfig } from './types.ts';
 
 /**
  * Identity function for authoring a site's affiliate config with type checking

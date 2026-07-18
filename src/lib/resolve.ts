@@ -1,12 +1,18 @@
-import type { AffiliateConfig, ResolvedAffiliate } from './types';
+import type { AffiliateConfig, ResolvedAffiliate } from './types.ts';
 
 /**
  * Resolves a flat catalog key (e.g. 'atomicHabits', 'protonPass') against a
  * site's affiliate config into a real URL. Throws on an unknown key, an
  * unknown program, or a catalog entry/program kind mismatch - an unresolvable
  * affiliate link is a build failure, not a silently broken link.
+ *
+ * `channel` selects a per-channel tag/link override (e.g. a distinct Amazon
+ * tracking ID for Medium reposts) if the program declares one via
+ * `channelTags`/`channelLinks` - falls back to the default `tag`/`links` entry
+ * for any channel not listed, so passing an unconfigured channel is a no-op,
+ * not an error.
  */
-export function resolveAffiliate(config: AffiliateConfig, key: string): ResolvedAffiliate {
+export function resolveAffiliate(config: AffiliateConfig, key: string, channel?: string): ResolvedAffiliate {
   const entry = config.catalog[key];
   if (!entry) {
     throw new Error(
@@ -25,8 +31,9 @@ export function resolveAffiliate(config: AffiliateConfig, key: string): Resolved
         `Catalog key "${key}" has an "asin" field, but program "${entry.program}" is kind "${program.kind}", not "amazon".`
       );
     }
+    const tag = (channel && program.channelTags?.[channel]) || program.tag;
     return {
-      url: `https://www.amazon.com/dp/${entry.asin}/ref=nosim?tag=${program.tag}`,
+      url: `https://www.amazon.com/dp/${entry.asin}/ref=nosim?tag=${tag}`,
       program: entry.program,
     };
   }
@@ -37,7 +44,7 @@ export function resolveAffiliate(config: AffiliateConfig, key: string): Resolved
         `Catalog key "${key}" has a "link" field, but program "${entry.program}" is kind "${program.kind}", not "links".`
       );
     }
-    const url = program.links[entry.link];
+    const url = (channel && program.channelLinks?.[channel]?.[entry.link]) || program.links[entry.link];
     if (!url) {
       throw new Error(
         `Catalog key "${key}" references unknown link "${entry.link}" in program "${entry.program}".`

@@ -1,5 +1,6 @@
-export { defineAffiliateConfig } from './lib/config';
-export { resolveAffiliate } from './lib/resolve';
+export { defineAffiliateConfig } from './lib/config.ts';
+export { resolveAffiliate } from './lib/resolve.ts';
+export { buildChannelRewriteMap, rewriteAffiliateLinksForChannel } from './lib/channel-rewrite.ts';
 export type {
   AffiliateConfig,
   AffiliateProgram,
@@ -9,4 +10,4 @@ export type {
   CatalogEntryAmazon,
   CatalogEntryLink,
   ResolvedAffiliate,
-} from './lib/types';
+} from './lib/types.ts';

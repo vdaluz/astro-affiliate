@@ -1,5 +1,5 @@
-import type { AffiliateConfig } from './types';
-import { resolveAffiliate } from './resolve';
+import type { AffiliateConfig } from './types.ts';
+import { resolveAffiliate } from './resolve.ts';
 
 const AFFILIATE_PREFIX = 'affiliate:';
 
