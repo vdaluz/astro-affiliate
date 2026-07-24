@@ -1,6 +1,6 @@
 ---
 import type { AffiliateConfig } from '../lib/types';
-import { resolveLocalized } from '../lib/i18n';
+import { resolveDisclosures } from '../lib/disclosures';
 
 interface Props {
   config: AffiliateConfig;
@@ -12,10 +12,7 @@ interface Props {
 
 const { config, affiliates, class: className, locale } = Astro.props;
 
-const disclosures = affiliates
-  .map((name) => config.programs[name]?.disclosure)
-  .filter((text): text is NonNullable<typeof text> => Boolean(text))
-  .map((text) => resolveLocalized(text, locale));
+const disclosures = resolveDisclosures(config, affiliates, locale);
 ---
 
 {
