@@ -1,5 +1,7 @@
 # @vdaluz/astro-affiliate
 
+[![CI](https://github.com/vdaluz/astro-affiliate/actions/workflows/ci.yml/badge.svg)](https://github.com/vdaluz/astro-affiliate/actions/workflows/ci.yml)
+
 Shared affiliate-link catalog resolver and disclosure components for vdaluz.com-family sites. Ships raw `.astro` and `.ts` - the consuming app's Astro/Vite compiles them (no prebuild step). Machinery only: the package carries no affiliate data itself, each site supplies its own catalog, tracking tags, and disclosure text via config.
 
 ## Install
