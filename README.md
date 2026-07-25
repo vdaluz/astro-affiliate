@@ -230,17 +230,6 @@ This is a component library, not a drop-in catalog. Each consuming app owns:
   [`@vdaluz/astro-blog`'s `tokens.example.css`](https://github.com/vdaluz/astro-blog) for the
   full token set these sites already share.
 
-## Release process
-
-Tag-pinned tarballs, no registry:
-
-1. Test before tagging: `npm pack`, install the tarball into a scratch Astro app (or one of the
-   consumers locally), `astro check && astro build`.
-2. Bump `version` in `package.json`, commit.
-3. Tag `vX.Y.Z` and push the tag. **The tag must be public before any consumer CI references
-   it**, the tarball URL 404s otherwise.
-4. Bump the tag in each consumer's `package.json` dependency URL.
-
 ## Contributing
 
 Issues welcome. PRs by discussion - open an issue first for anything beyond a typo or docs fix.
