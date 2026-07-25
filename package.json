@@ -1,9 +1,25 @@
 {
   "name": "@vdaluz/astro-affiliate",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "FTC-compliant affiliate-link catalog resolver and disclosure components - proven in production on vdaluz.com and imperfectsystems.com.",
-  "type": "module",
+  "keywords": [
+    "astro",
+    "astro-component",
+    "affiliate-marketing",
+    "ftc-disclosure",
+    "amazon-associates"
+  ],
+  "homepage": "https://github.com/vdaluz/astro-affiliate#readme",
+  "bugs": {
+    "url": "https://github.com/vdaluz/astro-affiliate/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vdaluz/astro-affiliate.git"
+  },
   "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
   "scripts": {
     "check": "astro check",
     "test": "node --test"
