@@ -4,6 +4,12 @@ All notable changes to this project are documented here. Format loosely follows 
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-07-25
+
+### Added
+
+- `AffiliateLink.astro` gained an optional `channel` prop, forwarded to `resolveAffiliate`, so non-markdown pages (e.g. gear pages) can target a per-channel tag/link the same way markdown links and rewrites already can.
+
 ## [0.5.0] - 2026-07-25
 
 ### Added

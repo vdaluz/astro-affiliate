@@ -15,7 +15,7 @@ Alternatively, a pinned https tarball from a tag works too, with no registry inv
 ```jsonc
 // package.json
 "dependencies": {
-  "@vdaluz/astro-affiliate": "https://github.com/vdaluz/astro-affiliate/archive/refs/tags/v0.5.0.tar.gz"
+  "@vdaluz/astro-affiliate": "https://github.com/vdaluz/astro-affiliate/archive/refs/tags/v0.5.1.tar.gz"
 }
 ```
 
