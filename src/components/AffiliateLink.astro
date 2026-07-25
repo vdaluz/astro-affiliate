@@ -6,11 +6,13 @@ interface Props {
   config: AffiliateConfig;
   /** Flat catalog key, e.g. 'atomicHabits'. */
   affiliateKey: string;
+  /** Per-channel tag/link override, e.g. 'medium'. Falls back to the program's default. */
+  channel?: string;
   class?: string;
 }
 
-const { config, affiliateKey, class: className } = Astro.props;
-const { url } = resolveAffiliate(config, affiliateKey);
+const { config, affiliateKey, channel, class: className } = Astro.props;
+const { url } = resolveAffiliate(config, affiliateKey, channel);
 ---
 
 <a href={url} target="_blank" rel="noopener noreferrer sponsored" class={className}>

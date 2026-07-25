@@ -174,7 +174,7 @@ import { affiliate } from '../config/affiliate';
 </AffiliateLink>
 ```
 
-Renders `target="_blank" rel="noopener noreferrer sponsored"` by default. Pass `class` to style it.
+Renders `target="_blank" rel="noopener noreferrer sponsored"` by default. Pass `class` to style it, or `channel` to target a per-channel tag/link (see [Per-channel tags](#per-channel-tags-reposts-syndication)) - falls back to the program's default when omitted or unconfigured for that channel.
 
 ## Disclosure (`<AffiliateDisclosure>`)
 
