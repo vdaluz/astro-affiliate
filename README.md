@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/vdaluz/astro-affiliate/actions/workflows/ci.yml/badge.svg)](https://github.com/vdaluz/astro-affiliate/actions/workflows/ci.yml)
 
-Shared affiliate-link catalog resolver and disclosure components for vdaluz.com-family sites. Ships raw `.astro` and `.ts` - the consuming app's Astro/Vite compiles them (no prebuild step). Machinery only: the package carries no affiliate data itself, each site supplies its own catalog, tracking tags, and disclosure text via config.
+Affiliate links need FTC-compliant disclosure, per-channel tracking tags for reposts and syndication, and a way to keep the two in sync so a disclosure can't silently drift from the links it's supposed to cover. `@vdaluz/astro-affiliate` is a catalog resolver and disclosure component pair that enforces that link: the remark plugin fails the build if a post uses an affiliate link without declaring its program in frontmatter. Ships raw `.astro` and `.ts` - the consuming app's Astro/Vite compiles them (no prebuild step). Machinery only: the package carries no affiliate data itself, each site supplies its own catalog, tracking tags, and disclosure text via config. Proven in production on [vdaluz.com](https://vdaluz.com) and [imperfectsystems.com](https://imperfectsystems.com) - see [Consumers](#consumers).
 
 ## Install
 
@@ -19,7 +19,9 @@ Pinned https tarball from a tag (no registry needed):
 > shorthand (and even an explicit `git+https://` URL) to `git+ssh://` in the lockfile.
 > CI runners (e.g. Cloudflare Pages/Workers) have no SSH key, so `npm ci` would fail to
 > clone it. The `/archive/refs/tags/<tag>.tar.gz` URL is anonymous https with an integrity
-> hash in the lockfile, it just works in CI. Bump the tag in the URL to upgrade.
+> hash in the lockfile, it just works in CI. Bump the tag in the URL to upgrade. This is the
+> only supported install path; there's no npm registry package (tag-tarball works for anyone,
+> no registry auth needed).
 
 Peer dependency: `astro` >= 6.
 
@@ -200,6 +202,10 @@ Tag-pinned tarballs, no registry:
 3. Tag `vX.Y.Z` and push the tag. **The tag must be public before any consumer CI references
    it**, the tarball URL 404s otherwise.
 4. Bump the tag in each consumer's `package.json` dependency URL.
+
+## Contributing
+
+Issues welcome. PRs by discussion - open an issue first for anything beyond a typo or docs fix.
 
 ## Consumers
 
