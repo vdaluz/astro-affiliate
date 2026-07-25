@@ -32,8 +32,9 @@ export function resolveAffiliate(config: AffiliateConfig, key: string, channel?:
       );
     }
     const tag = (channel && program.channelTags?.[channel]) || program.tag;
+    const domain = program.domain ?? 'www.amazon.com';
     return {
-      url: `https://www.amazon.com/dp/${entry.asin}/ref=nosim?tag=${tag}`,
+      url: `https://${domain}/dp/${entry.asin}/ref=nosim?tag=${tag}`,
       program: entry.program,
     };
   }

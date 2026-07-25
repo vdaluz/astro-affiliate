@@ -2,12 +2,19 @@ import type { Localized } from './i18n.ts';
 
 /**
  * Amazon Associates program. `resolveAffiliate` constructs the manual-link URL
- * from `tag` and a catalog entry's ASIN: `https://www.amazon.com/dp/<ASIN>/ref=nosim?tag=<tag>`.
+ * from `domain`, `tag`, and a catalog entry's ASIN: `https://<domain>/dp/<ASIN>/ref=nosim?tag=<tag>`.
  */
 export interface AffiliateProgramAmazon {
   kind: 'amazon';
   /** Associates tracking ID for this site, e.g. 'vdaluz-20'. */
   tag: string;
+  /**
+   * Amazon marketplace domain. Defaults to 'www.amazon.com'. Set for a
+   * locale-specific marketplace (e.g. 'www.amazon.com.br') that needs its own
+   * Associates tag - declare a second 'amazon'-kind program with that domain
+   * and tag, and catalog entries referencing it.
+   */
+  domain?: string;
   /**
    * Optional per-channel tracking ID overrides (e.g. `{ medium: 'vdaluz-medium-20' }`
    * for a distinct tag on Medium reposts). A channel not listed here falls back to `tag`.

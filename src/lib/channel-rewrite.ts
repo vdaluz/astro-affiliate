@@ -8,6 +8,12 @@ import { resolveAffiliate } from './resolve.ts';
  * `remarkAffiliate`, so a repost target (Medium, or any future channel) can't
  * get its own tag through a second compile - this map lets already-rendered
  * content be retargeted after the fact instead.
+ *
+ * Rendered HTML escapes `&` as `&amp;` in href attributes, so a default URL
+ * with an ampersand (any URL with more than one query param) never matches
+ * the raw map key in prerendered output. Add the HTML-escaped variant of
+ * each such entry too, mapped to the escaped channel URL, so substitution
+ * against real rendered HTML works regardless of query param count.
  */
 export function buildChannelRewriteMap(config: AffiliateConfig, channel: string): Record<string, string> {
   const map: Record<string, string> = {};
@@ -16,6 +22,10 @@ export function buildChannelRewriteMap(config: AffiliateConfig, channel: string)
     const channelResolved = resolveAffiliate(config, key, channel);
     if (defaultResolved.url !== channelResolved.url) {
       map[defaultResolved.url] = channelResolved.url;
+      const escapedDefault = defaultResolved.url.replace(/&/g, '&amp;');
+      if (escapedDefault !== defaultResolved.url) {
+        map[escapedDefault] = channelResolved.url.replace(/&/g, '&amp;');
+      }
     }
   }
   return map;

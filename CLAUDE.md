@@ -1,0 +1,30 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code when working in this repository.
+
+## What this repo is
+
+`@vdaluz/astro-affiliate`: shared affiliate-link catalog resolver and disclosure components for vdaluz.com-family sites. Machinery only - the package carries no affiliate data itself; each site supplies its own catalog, tracking tags, and disclosure text via config. Consumed by vdaluz.com and imperfectsystems.com as a pinned https-tarball dependency.
+
+## Workflow
+
+**No worktrees.** Work directly on `main` - this repo is small, single-maintainer, and worked sequentially, per the standing rule for the sibling `@vdaluz/*` packages (astro-blog, astro-og-cards, astro-opt-in-analytics all follow this). Consumers only ever see tagged releases, so `main` is safe to iterate on.
+
+## Conventions
+
+- **Raw source, no build step.** Ships `.ts` and `.astro` from `src/`; the consuming app's Astro/Vite compiles them. Never add a build/dist step or `main` field.
+- **Explicit `.ts` extensions on relative imports** (matches astro-og-cards) - required for `node --test` to resolve them directly without a bundler.
+- **Per-path exports.** Components are exposed via the `exports` map in `package.json`. New public files need an exports entry.
+- **Dependency-free.** No runtime dependencies. Keep it that way unless the maintainer explicitly decides otherwise.
+- **Compliance by construction, not convenience.** `remarkAffiliate` enforces used ⊆ declared (an affiliate link used without its program in frontmatter fails the build) and `resolveAffiliate` throws on any unresolvable key/program/kind mismatch rather than silently producing a broken or undisclosed link. Preserve this "unresolvable is a build failure" property in any change to the resolution path.
+- **Token-driven default styling.** `<AffiliateDisclosure>`'s default class references the `muted` token custom property (see [`@vdaluz/astro-blog`'s `tokens.example.css`](https://github.com/vdaluz/astro-blog) for the full token set the family sites share). Never hardcode a site's palette; consumers can always override via the `class` prop.
+
+## Release process
+
+Same tag-pinned-tarball process shared by all `@vdaluz/*` component libraries - see root
+`~/Repos/CLAUDE.md` -> "Astro shared-library release process".
+
+## Consumers
+
+- [vdaluz.com](https://vdaluz.com)
+- [imperfectsystems.com](https://imperfectsystems.com)

@@ -57,7 +57,20 @@ export const affiliate = defineAffiliateConfig({
 Two program kinds:
 
 - **`amazon`** - supply a site tag once; catalog entries reference it with just an ASIN. The URL
-  is constructed as `https://www.amazon.com/dp/<ASIN>/ref=nosim?tag=<tag>`.
+  is constructed as `https://<domain>/dp/<ASIN>/ref=nosim?tag=<tag>`, where `domain` defaults to
+  `www.amazon.com`. For a locale-specific marketplace (e.g. Brazil), declare a second `amazon`-kind
+  program with its own `domain` and `tag`, and point locale-specific catalog entries at it:
+
+  ```ts
+  programs: {
+    amazon: { kind: 'amazon', tag: 'vdaluz-20', disclosure: '...' },
+    amazonBr: { kind: 'amazon', domain: 'www.amazon.com.br', tag: 'vdaluz-br-20', disclosure: '...' },
+  },
+  catalog: {
+    atomicHabits: { program: 'amazon', asin: 'B07RFSSYBH' },
+    atomicHabitsBr: { program: 'amazonBr', asin: 'B07RFSSYBH' },
+  },
+  ```
 - **`links`** - a flat link-key-to-URL map on the program; catalog entries reference one of those
   keys.
 
@@ -180,6 +193,29 @@ const { affiliates = [] } = entry.data;
 Renders one paragraph joining the disclosure text for every program in `affiliates`, or nothing
 if the array is empty. Default styling is `text-sm text-muted italic`; pass `class` to override,
 see [Per-app glue](#per-app-glue) for the token variables this assumes.
+
+### Localized disclosure text
+
+A program's `disclosure` accepts either a plain string or a `Localized` value - `{ default: string, [locale]: string }` - for sites publishing in more than one language:
+
+```ts
+programs: {
+  amazon: {
+    kind: 'amazon',
+    tag: 'vdaluz-20',
+    disclosure: {
+      default: 'As an Amazon Associate, I earn from qualifying purchases.',
+      es: 'Como Afiliado de Amazon, obtengo ingresos por las compras que califican.',
+    },
+  },
+},
+```
+
+Pass `locale` to `<AffiliateDisclosure>` to select the matching entry; it falls back to `default` when the given locale has no entry, or when `disclosure` is a plain string:
+
+```astro
+<AffiliateDisclosure config={affiliate} affiliates={affiliates} locale={locale} />
+```
 
 ## Per-app glue
 

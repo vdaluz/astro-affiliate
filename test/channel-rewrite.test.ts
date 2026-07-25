@@ -16,11 +16,18 @@ const config: AffiliateConfig = {
       disclosure: 'proton disclosure',
       links: { pass: 'https://go.getproton.me/SH2FI' },
     },
+    multiParam: {
+      kind: 'links',
+      disclosure: 'multi-param disclosure',
+      links: { deal: 'https://example.com/deal?ref=vdaluz&utm_source=site' },
+      channelLinks: { medium: { deal: 'https://example.com/deal?ref=vdaluz-medium&utm_source=site' } },
+    },
   },
   catalog: {
     atomicHabits: { program: 'amazon', asin: 'B07RFSSYBH' },
     deepWork: { program: 'amazon', asin: 'B01N9SPZLB' },
     protonPass: { program: 'proton', link: 'pass' },
+    multiParamDeal: { program: 'multiParam', link: 'deal' },
   },
 };
 
@@ -31,7 +38,23 @@ test('buildChannelRewriteMap only includes entries where the channel actually di
       'https://www.amazon.com/dp/B07RFSSYBH/ref=nosim?tag=vdaluz-medium-20',
     'https://www.amazon.com/dp/B01N9SPZLB/ref=nosim?tag=vdaluz-20':
       'https://www.amazon.com/dp/B01N9SPZLB/ref=nosim?tag=vdaluz-medium-20',
+    'https://example.com/deal?ref=vdaluz&utm_source=site':
+      'https://example.com/deal?ref=vdaluz-medium&utm_source=site',
+    'https://example.com/deal?ref=vdaluz&amp;utm_source=site':
+      'https://example.com/deal?ref=vdaluz-medium&amp;utm_source=site',
   });
+});
+
+test('buildChannelRewriteMap adds the HTML-escaped variant only for a default URL containing an ampersand', () => {
+  const map = buildChannelRewriteMap(config, 'medium');
+  // Amazon URLs here have a single query param, no ampersand, so no escaped variant is added.
+  assert.equal('https://www.amazon.com/dp/B07RFSSYBH/ref=nosim?tag=vdaluz-20&amp;' in map, false);
+});
+
+test('rewriteAffiliateLinksForChannel rewrites a multi-param URL as it actually appears in rendered HTML (escaped)', () => {
+  const html = '<a href="https://example.com/deal?ref=vdaluz&amp;utm_source=site">Deal</a>';
+  const rewritten = rewriteAffiliateLinksForChannel(html, config, 'medium');
+  assert.equal(rewritten, '<a href="https://example.com/deal?ref=vdaluz-medium&amp;utm_source=site">Deal</a>');
 });
 
 test('buildChannelRewriteMap is empty for a channel with no overrides configured', () => {

@@ -57,3 +57,21 @@ test('falls back to the default link for an unconfigured channel', () => {
 test('throws on an unknown catalog key', () => {
   assert.throws(() => resolveAffiliate(config, 'nope'), /Unknown affiliate catalog key/);
 });
+
+test('resolves an amazon catalog key against www.amazon.com when domain is unset', () => {
+  const { url } = resolveAffiliate(config, 'atomicHabits');
+  assert.match(url, /^https:\/\/www\.amazon\.com\//);
+});
+
+test('resolves an amazon catalog key against a configured marketplace domain', () => {
+  const brConfig: AffiliateConfig = {
+    programs: {
+      amazonBr: { kind: 'amazon', domain: 'www.amazon.com.br', tag: 'vdaluz-br-20', disclosure: 'br disclosure' },
+    },
+    catalog: {
+      atomicHabitsBr: { program: 'amazonBr', asin: 'B07RFSSYBH' },
+    },
+  };
+  const { url } = resolveAffiliate(brConfig, 'atomicHabitsBr');
+  assert.equal(url, 'https://www.amazon.com.br/dp/B07RFSSYBH/ref=nosim?tag=vdaluz-br-20');
+});

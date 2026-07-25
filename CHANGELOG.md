@@ -4,6 +4,21 @@ All notable changes to this project are documented here. Format loosely follows 
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-07-25
+
+### Added
+
+- Optional `domain` field on `amazon`-kind programs, for locale-specific Amazon marketplaces (e.g. `www.amazon.com.br`) that need their own Associates tag. Defaults to `www.amazon.com`.
+- CLAUDE.md, matching the sibling `@vdaluz/*` packages' conventions.
+
+### Fixed
+
+- `buildChannelRewriteMap` now also maps the HTML-escaped variant of a default URL (`&` as `&amp;`) to the escaped channel URL - a default URL with more than one query param never matched the raw map key in prerendered HTML, silently keeping the default tag on reposts.
+
+### Documentation
+
+- Documented the `Localized` disclosure form and `AffiliateDisclosure`'s `locale` prop, previously implemented but never mentioned in the README.
+
 ## [0.4.2] - 2026-07-25
 
 ### Added
