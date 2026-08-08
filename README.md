@@ -15,7 +15,7 @@ Alternatively, a pinned https tarball from a tag works too, with no registry inv
 ```jsonc
 // package.json
 "dependencies": {
-  "@vdaluz/astro-affiliate": "https://github.com/vdaluz/astro-affiliate/archive/refs/tags/v0.5.1.tar.gz"
+  "@vdaluz/astro-affiliate": "https://github.com/vdaluz/astro-affiliate/archive/refs/tags/v0.6.0.tar.gz"
 }
 ```
 
@@ -175,6 +175,15 @@ import { affiliate } from '../config/affiliate';
 ```
 
 Renders `target="_blank" rel="noopener noreferrer sponsored"` by default. Pass `class` to style it, or `channel` to target a per-channel tag/link (see [Per-channel tags](#per-channel-tags-reposts-syndication)) - falls back to the program's default when omitted or unconfigured for that channel.
+
+### Click tracking
+
+`<AffiliateLink>` renders `data-affiliate-key`, `data-affiliate-channel` (omitted when no `channel`
+prop is passed), and `data-affiliate-program` on the anchor. This package emits no click events
+itself - it's a data-attribute contract a consumer's own analytics wiring can read. See
+[`@vdaluz/astro-opt-in-analytics`'s README](https://github.com/vdaluz/astro-opt-in-analytics#affiliate-click-tracking)
+for `bindAffiliateClickTracking()`, which reads these attributes and reports an `affiliate-click`
+event once analytics consent is granted.
 
 ## Disclosure (`<AffiliateDisclosure>`)
 

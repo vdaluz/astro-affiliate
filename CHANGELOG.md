@@ -4,6 +4,12 @@ All notable changes to this project are documented here. Format loosely follows 
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-08-08
+
+### Added
+
+- `AffiliateLink.astro` renders `data-affiliate-key`, `data-affiliate-channel`, and `data-affiliate-program` on the anchor, a data-attribute contract for a consumer's own click-tracking wiring (see `@vdaluz/astro-opt-in-analytics`'s `bindAffiliateClickTracking()`).
+
 ## [0.5.1] - 2026-07-25
 
 ### Added

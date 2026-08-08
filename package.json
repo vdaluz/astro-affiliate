@@ -1,6 +1,6 @@
 {
   "name": "@vdaluz/astro-affiliate",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "FTC-compliant affiliate-link catalog resolver and disclosure components - proven in production on vdaluz.com and imperfectsystems.com.",
   "keywords": [
     "astro",

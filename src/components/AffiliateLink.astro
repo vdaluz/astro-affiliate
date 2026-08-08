@@ -12,9 +12,17 @@ interface Props {
 }
 
 const { config, affiliateKey, channel, class: className } = Astro.props;
-const { url } = resolveAffiliate(config, affiliateKey, channel);
+const { url, program } = resolveAffiliate(config, affiliateKey, channel);
 ---
 
-<a href={url} target="_blank" rel="noopener noreferrer sponsored" class={className}>
+<a
+  href={url}
+  target="_blank"
+  rel="noopener noreferrer sponsored"
+  class={className}
+  data-affiliate-key={affiliateKey}
+  data-affiliate-channel={channel}
+  data-affiliate-program={program}
+>
   <slot />
 </a>
