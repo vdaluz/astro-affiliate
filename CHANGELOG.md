@@ -4,6 +4,12 @@ All notable changes to this project are documented here. Format loosely follows 
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-08-09
+
+### Added
+
+- `remarkAffiliate` now writes the post's own catalog keys (document order, duplicates removed) to `affiliateKeys` in the page's frontmatter, via `remarkPluginFrontmatter` - so a consumer can read which catalog items a post actually linked to without re-parsing markdown. Undefined, not an empty array, when a post has no affiliate links.
+
 ## [0.6.0] - 2026-08-08
 
 ### Added

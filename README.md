@@ -15,7 +15,7 @@ Alternatively, a pinned https tarball from a tag works too, with no registry inv
 ```jsonc
 // package.json
 "dependencies": {
-  "@vdaluz/astro-affiliate": "https://github.com/vdaluz/astro-affiliate/archive/refs/tags/v0.6.0.tar.gz"
+  "@vdaluz/astro-affiliate": "https://github.com/vdaluz/astro-affiliate/archive/refs/tags/v0.7.0.tar.gz"
 }
 ```
 
@@ -158,6 +158,20 @@ I use [Atomic Habits](affiliate:atomicHabits) to stay on track.
 fails the build. **Compliance by construction:** every program actually used by `affiliate:`
 links in a post must be declared in that post's `affiliates:` frontmatter array, or the build
 fails with a clear error - there's no way to ship an affiliate link without its disclosure.
+
+The plugin also writes the post's own catalog keys, in document order with duplicates removed,
+to `affiliateKeys` in the page's frontmatter - useful for a consumer that wants to know "which
+catalog items did this post actually link to" without re-parsing markdown (e.g. to seed a
+related-products widget from a post's own links before falling back to other sources). It's
+`undefined`, not an empty array, on a post with no affiliate links - read it as
+`affiliateKeys ?? []`. Access it via Astro's `remarkPluginFrontmatter`:
+
+```astro
+---
+const { remarkPluginFrontmatter } = await render(entry);
+const usedKeys = remarkPluginFrontmatter.affiliateKeys ?? [];
+---
+```
 
 ## `.astro` pages (`<AffiliateLink>`)
 

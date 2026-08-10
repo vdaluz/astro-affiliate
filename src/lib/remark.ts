@@ -15,6 +15,7 @@ interface VFileWithAstroFrontmatter {
     astro?: {
       frontmatter?: {
         affiliates?: string[];
+        affiliateKeys?: string[];
       };
     };
   };
@@ -36,6 +37,11 @@ function collectAffiliateLinkNodes(node: MdastNode, out: MdastNode[]) {
  * `affiliates:` frontmatter (so `<AffiliateDisclosure>` knows to render it).
  * An unknown key, or a used program missing from frontmatter, fails the build.
  *
+ * Also writes the post's own affiliate catalog keys, in document order with
+ * duplicates removed, to `affiliateKeys` in the page's frontmatter (via
+ * `remarkPluginFrontmatter`) - undefined, not an empty array, on a post with
+ * no affiliate links, so a consumer should read it as `affiliateKeys ?? []`.
+ *
  *   import { remarkAffiliate } from '@vdaluz/astro-affiliate/remark';
  *
  *   export default defineConfig({
@@ -50,12 +56,14 @@ export function remarkAffiliate(config: AffiliateConfig) {
 
     const declaredAffiliates = file.data?.astro?.frontmatter?.affiliates ?? [];
     const usedPrograms = new Set<string>();
+    const usedKeys: string[] = [];
 
     for (const node of linkNodes) {
       const key = node.url!.slice(AFFILIATE_PREFIX.length);
       const { url, program } = resolveAffiliate(config, key);
       node.url = url;
       usedPrograms.add(program);
+      if (!usedKeys.includes(key)) usedKeys.push(key);
     }
 
     for (const program of usedPrograms) {
@@ -65,5 +73,10 @@ export function remarkAffiliate(config: AffiliateConfig) {
         );
       }
     }
+
+    file.data ??= {};
+    file.data.astro ??= {};
+    file.data.astro.frontmatter ??= {};
+    file.data.astro.frontmatter.affiliateKeys = usedKeys;
   };
 }

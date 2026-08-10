@@ -22,7 +22,9 @@ const config: AffiliateConfig = {
   },
 };
 
-function fileWithAffiliates(affiliates: string[]) {
+function fileWithAffiliates(affiliates: string[]): {
+  data: { astro: { frontmatter: { affiliates: string[]; affiliateKeys?: string[] } } };
+} {
   return { data: { astro: { frontmatter: { affiliates } } } };
 }
 
@@ -62,6 +64,24 @@ test('throws when a used program is not declared in frontmatter', () => {
 test('does nothing when the tree has no affiliate links, even with no frontmatter', () => {
   const paragraph = { type: 'paragraph', children: [{ type: 'text' }] };
   const tree = { type: 'root', children: [paragraph] };
+  const file: { data?: { astro?: { frontmatter?: { affiliateKeys?: string[] } } } } = {};
 
-  assert.doesNotThrow(() => remarkAffiliate(config)({ ...tree }, {}));
+  assert.doesNotThrow(() => remarkAffiliate(config)({ ...tree }, file));
+  assert.equal(file.data, undefined);
+});
+
+test('writes affiliateKeys in document order with duplicates removed', () => {
+  const tree = {
+    type: 'root',
+    children: [
+      { type: 'link', url: 'affiliate:atomicHabits', children: [] },
+      { type: 'link', url: 'affiliate:protonPass', children: [] },
+      { type: 'link', url: 'affiliate:atomicHabits', children: [] },
+    ],
+  };
+  const file = fileWithAffiliates(['amazon', 'proton']);
+
+  remarkAffiliate(config)(tree, file);
+
+  assert.deepEqual(file.data.astro.frontmatter.affiliateKeys, ['atomicHabits', 'protonPass']);
 });
