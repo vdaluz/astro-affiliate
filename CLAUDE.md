@@ -4,7 +4,7 @@ This file provides guidance to Claude Code when working in this repository.
 
 ## What this repo is
 
-`@vdaluz/astro-affiliate`: shared affiliate-link catalog resolver and disclosure components for vdaluz.com-family sites. Machinery only - the package carries no affiliate data itself; each site supplies its own catalog, tracking tags, and disclosure text via config. Consumed by vdaluz.com and imperfectsystems.com as a pinned https-tarball dependency.
+`@vdaluz/astro-affiliate`: shared affiliate-link catalog resolver and disclosure components for vdaluz.com-family sites. Machinery only - the package carries no affiliate data itself; each site supplies its own catalog, tracking tags, and disclosure text via config. Consumed by vdaluz.com, imperfectsystems.com, and freetoolbox.net as an npm-registry semver pin. vicstradamus.com also declares it as a dependency but has no `src/config/affiliate.ts` or any import of it - looks unused, worth checking before its next dependency bump.
 
 ## Workflow
 
@@ -21,10 +21,12 @@ This file provides guidance to Claude Code when working in this repository.
 
 ## Release process
 
-Same tag-pinned-tarball process shared by all `@vdaluz/*` component libraries - see root
-`~/Repos/CLAUDE.md` -> "Astro shared-library release process".
+Same tag-then-npm-publish process shared by all `@vdaluz/*` component libraries, consumed via
+npm-registry semver pins (not tarball URLs, since META-90) - see root `~/Repos/CLAUDE.md` ->
+"Astro shared-library release process".
 
 ## Consumers
 
 - [vdaluz.com](https://vdaluz.com)
 - [imperfectsystems.com](https://imperfectsystems.com)
+- [freetoolbox.net](https://freetoolbox.net)
