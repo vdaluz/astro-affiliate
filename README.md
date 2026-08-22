@@ -1,6 +1,8 @@
 # @vdaluz/astro-affiliate
 
+[![npm version](https://img.shields.io/npm/v/@vdaluz/astro-affiliate.svg)](https://www.npmjs.com/package/@vdaluz/astro-affiliate)
 [![CI](https://github.com/vdaluz/astro-affiliate/actions/workflows/ci.yml/badge.svg)](https://github.com/vdaluz/astro-affiliate/actions/workflows/ci.yml)
+[![license](https://img.shields.io/npm/l/@vdaluz/astro-affiliate.svg)](LICENSE)
 
 Affiliate links need FTC-compliant disclosure, per-channel tracking tags for reposts and syndication, and a way to keep the two in sync so a disclosure can't silently drift from the links it's supposed to cover. `@vdaluz/astro-affiliate` is a catalog resolver and disclosure component pair that enforces that link: the remark plugin fails the build if a post uses an affiliate link without declaring its program in frontmatter. Ships raw `.astro` and `.ts` - the consuming app's Astro/Vite compiles them (no prebuild step). Machinery only: the package carries no affiliate data itself, each site supplies its own catalog, tracking tags, and disclosure text via config. Proven in production on [vdaluz.com](https://vdaluz.com) and [imperfectsystems.com](https://imperfectsystems.com) - see [Consumers](#consumers).
 
@@ -9,21 +11,6 @@ Affiliate links need FTC-compliant disclosure, per-channel tracking tags for rep
 ```
 npm install @vdaluz/astro-affiliate
 ```
-
-Alternatively, a pinned https tarball from a tag works too, with no registry involved:
-
-```jsonc
-// package.json
-"dependencies": {
-  "@vdaluz/astro-affiliate": "https://github.com/vdaluz/astro-affiliate/archive/refs/tags/v0.7.0.tar.gz"
-}
-```
-
-> **Why a tarball, not `github:vdaluz/astro-affiliate#v0.2.0`?** npm canonicalizes GitHub
-> shorthand (and even an explicit `git+https://` URL) to `git+ssh://` in the lockfile.
-> CI runners (e.g. Cloudflare Pages/Workers) have no SSH key, so `npm ci` would fail to
-> clone it. The `/archive/refs/tags/<tag>.tar.gz` URL is anonymous https with an integrity
-> hash in the lockfile, it just works in CI. Bump the tag in the URL to upgrade.
 
 Peer dependency: `astro` >= 6.
 
@@ -261,3 +248,9 @@ Issues welcome. PRs by discussion - open an issue first for anything beyond a ty
 
 - [vdaluz.com](https://vdaluz.com)
 - [imperfectsystems.com](https://imperfectsystems.com)
+- [freetoolbox.net](https://freetoolbox.net)
+- [vicstradamus.com](https://vicstradamus.com)
+
+## License
+
+MIT
