@@ -4,6 +4,12 @@ All notable changes to this project are documented here. Format loosely follows 
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-08-22
+
+### Changed
+
+- **Stability declaration only, no breaking changes.** 14 releases in with no breaking changes recorded and stable in production across multiple sites - this bump declares the public API stable, not a rewrite. Future breaking changes will bump the major version as semver expects from here on.
+
 ## [0.8.1] - 2026-08-22
 
 ### Fixed
