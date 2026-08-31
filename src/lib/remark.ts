@@ -22,11 +22,35 @@ interface VFileWithAstroFrontmatter {
 }
 
 function collectAffiliateLinkNodes(node: MdastNode, out: MdastNode[]) {
-  if (node.type === 'link' && typeof node.url === 'string' && node.url.startsWith(AFFILIATE_PREFIX)) {
+  if (
+    (node.type === 'link' || node.type === 'definition') &&
+    typeof node.url === 'string' &&
+    node.url.startsWith(AFFILIATE_PREFIX)
+  ) {
     out.push(node);
   }
   if (node.children) {
     for (const child of node.children) collectAffiliateLinkNodes(child, out);
+  }
+}
+
+/**
+ * Last-resort guard: after rewriting every node `collectAffiliateLinkNodes`
+ * found, walk the whole tree once more for any node that still carries an
+ * `affiliate:`-prefixed `url` - a node type the collector doesn't know about
+ * (e.g. an image `![alt](affiliate:key)`). Unresolvable is a build failure
+ * here just like an unknown catalog key, so this must run even when the
+ * collector found nothing - that zero-nodes-collected case is exactly the
+ * shape of the reference-link bug this plugin exists to prevent.
+ */
+function assertNoRemainingAffiliateUrls(node: MdastNode) {
+  if (typeof node.url === 'string' && node.url.startsWith(AFFILIATE_PREFIX)) {
+    throw new Error(
+      `Unrewritten affiliate link "${node.url}" remains in the tree on a "${node.type}" node - collectAffiliateLinkNodes doesn't handle this node type yet.`
+    );
+  }
+  if (node.children) {
+    for (const child of node.children) assertNoRemainingAffiliateUrls(child);
   }
 }
 
@@ -41,6 +65,8 @@ function collectAffiliateLinkNodes(node: MdastNode, out: MdastNode[]) {
  * duplicates removed, to `affiliateKeys` in the page's frontmatter (via
  * `remarkPluginFrontmatter`) - undefined, not an empty array, on a post with
  * no affiliate links, so a consumer should read it as `affiliateKeys ?? []`.
+ * For a reference-style link (`[text][ref]`), "document order" follows the
+ * position of the `[ref]: affiliate:key` definition, not the in-prose usage.
  *
  *   import { remarkAffiliate } from '@vdaluz/astro-affiliate/remark';
  *
@@ -52,7 +78,11 @@ export function remarkAffiliate(config: AffiliateConfig) {
   return (tree: MdastNode, file: VFileWithAstroFrontmatter) => {
     const linkNodes: MdastNode[] = [];
     collectAffiliateLinkNodes(tree, linkNodes);
-    if (linkNodes.length === 0) return;
+
+    if (linkNodes.length === 0) {
+      assertNoRemainingAffiliateUrls(tree);
+      return;
+    }
 
     const declaredAffiliates = file.data?.astro?.frontmatter?.affiliates ?? [];
     const usedPrograms = new Set<string>();
@@ -78,5 +108,7 @@ export function remarkAffiliate(config: AffiliateConfig) {
     file.data.astro ??= {};
     file.data.astro.frontmatter ??= {};
     file.data.astro.frontmatter.affiliateKeys = usedKeys;
+
+    assertNoRemainingAffiliateUrls(tree);
   };
 }

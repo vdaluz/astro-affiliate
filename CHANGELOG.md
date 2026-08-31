@@ -4,6 +4,10 @@ All notable changes to this project are documented here. Format loosely follows 
 
 ## [Unreleased]
 
+### Fixed
+
+- `remarkAffiliate` ignored reference-style links (`[text][ref]` + a `[ref]: affiliate:key` definition) - the plugin found no `link` nodes to rewrite, so the raw `affiliate:key` URL shipped to the page and the used-⊆-declared compliance check never saw it, with no build error. Reference-style `affiliate:` links now resolve correctly, and any node type the plugin still can't handle (e.g. an image) now fails the build instead of shipping a broken href.
+
 ## [1.0.0] - 2026-08-22
 
 ### Changed

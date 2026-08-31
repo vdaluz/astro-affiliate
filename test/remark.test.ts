@@ -70,6 +70,33 @@ test('does nothing when the tree has no affiliate links, even with no frontmatte
   assert.equal(file.data, undefined);
 });
 
+test('rewrites a reference-style link, whose URL lives on a sibling definition node', () => {
+  const definition = { type: 'definition', identifier: 'ah', url: 'affiliate:atomicHabits' };
+  const linkReference = { type: 'linkReference', identifier: 'ah', children: [] };
+  const tree = {
+    type: 'root',
+    children: [{ type: 'paragraph', children: [linkReference] }, definition],
+  };
+  const file = fileWithAffiliates(['amazon']);
+
+  remarkAffiliate(config)(tree, file);
+
+  assert.equal(definition.url, 'https://www.amazon.com/dp/B07RFSSYBH/ref=nosim?tag=vdaluz-20');
+  assert.deepEqual(file.data.astro.frontmatter.affiliateKeys, ['atomicHabits']);
+});
+
+test('throws when an affiliate URL sits on a node type the collector does not handle', () => {
+  const tree = {
+    type: 'root',
+    children: [{ type: 'image', url: 'affiliate:atomicHabits', alt: 'cover' }],
+  };
+
+  assert.throws(
+    () => remarkAffiliate(config)(tree, fileWithAffiliates(['amazon'])),
+    /Unrewritten affiliate link .* on a "image" node/
+  );
+});
+
 test('writes affiliateKeys in document order with duplicates removed', () => {
   const tree = {
     type: 'root',
