@@ -31,16 +31,30 @@ export function buildChannelRewriteMap(config: AffiliateConfig, channel: string)
   return map;
 }
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 /**
  * Rewrites already-rendered content (e.g. a prerendered post's HTML) to swap
- * default-channel affiliate URLs for a specific channel's URLs. Exact
- * string replacement per catalog entry, not a generic regex over "tag=" or
- * similar - safe against matching unrelated content.
+ * default-channel affiliate URLs for a specific channel's URLs. Exact string
+ * matching per catalog entry (each default URL escaped into a regex
+ * alternative), not a generic regex over "tag=" or similar - safe against
+ * matching unrelated content.
+ *
+ * A single regex pass, not one split/join per entry: sequential passes
+ * re-scan each other's output, so a shorter default URL that happens to be a
+ * prefix of another entry's default OR channel URL would corrupt an already-
+ * rewritten result on a later pass. One pass never re-scans a replacement.
+ * Alternatives are ordered longest-first because regex alternation is
+ * first-match-wins at a given position, not longest-match-wins - without the
+ * ordering a shorter prefix could still win the match before the longer
+ * alternative gets a chance.
  */
 export function rewriteAffiliateLinksForChannel(content: string, config: AffiliateConfig, channel: string): string {
   const map = buildChannelRewriteMap(config, channel);
-  return Object.entries(map).reduce(
-    (result, [defaultUrl, channelUrl]) => result.split(defaultUrl).join(channelUrl),
-    content
-  );
+  const defaultUrls = Object.keys(map).sort((a, b) => b.length - a.length);
+  if (defaultUrls.length === 0) return content;
+  const pattern = new RegExp(defaultUrls.map(escapeRegExp).join('|'), 'g');
+  return content.replace(pattern, (matched) => map[matched]);
 }

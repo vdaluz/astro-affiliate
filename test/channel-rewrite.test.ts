@@ -22,12 +22,28 @@ const config: AffiliateConfig = {
       links: { deal: 'https://example.com/deal?ref=vdaluz&utm_source=site' },
       channelLinks: { medium: { deal: 'https://example.com/deal?ref=vdaluz-medium&utm_source=site' } },
     },
+    prefixed: {
+      kind: 'links',
+      disclosure: 'prefix-collision disclosure',
+      links: { a: 'https://ex1.com/go', b: 'https://ex1.com/go?x=1' },
+      channelLinks: { medium: { a: 'https://ex1.com/go-m', b: 'https://ex1.com/other' } },
+    },
+    channelUrlPrefix: {
+      kind: 'links',
+      disclosure: 'channel-URL prefix-collision disclosure',
+      links: { short: 'https://ex2.com/go', long: 'https://ex2.com/go?x=1' },
+      channelLinks: { medium: { short: 'https://ex2.com/go-m', long: 'https://ex2.com/go?x=2' } },
+    },
   },
   catalog: {
     atomicHabits: { program: 'amazon', asin: 'B07RFSSYBH' },
     deepWork: { program: 'amazon', asin: 'B01N9SPZLB' },
     protonPass: { program: 'proton', link: 'pass' },
     multiParamDeal: { program: 'multiParam', link: 'deal' },
+    prefixedShort: { program: 'prefixed', link: 'a' },
+    prefixedLong: { program: 'prefixed', link: 'b' },
+    channelUrlPrefixShort: { program: 'channelUrlPrefix', link: 'short' },
+    channelUrlPrefixLong: { program: 'channelUrlPrefix', link: 'long' },
   },
 };
 
@@ -42,6 +58,10 @@ test('buildChannelRewriteMap only includes entries where the channel actually di
       'https://example.com/deal?ref=vdaluz-medium&utm_source=site',
     'https://example.com/deal?ref=vdaluz&amp;utm_source=site':
       'https://example.com/deal?ref=vdaluz-medium&amp;utm_source=site',
+    'https://ex1.com/go': 'https://ex1.com/go-m',
+    'https://ex1.com/go?x=1': 'https://ex1.com/other',
+    'https://ex2.com/go': 'https://ex2.com/go-m',
+    'https://ex2.com/go?x=1': 'https://ex2.com/go?x=2',
   });
 });
 
@@ -78,4 +98,24 @@ test('rewriteAffiliateLinksForChannel swaps every occurrence of a default URL', 
 test('rewriteAffiliateLinksForChannel leaves content unchanged for a channel with no overrides', () => {
   const html = '<a href="https://www.amazon.com/dp/B07RFSSYBH/ref=nosim?tag=vdaluz-20">Atomic Habits</a>';
   assert.equal(rewriteAffiliateLinksForChannel(html, config, 'linkedin'), html);
+});
+
+test('rewriteAffiliateLinksForChannel handles a default URL that is a prefix of another entry\'s default URL (AST-47)', () => {
+  const html =
+    '<a href="https://ex1.com/go">Short</a><a href="https://ex1.com/go?x=1">Long</a>';
+  const rewritten = rewriteAffiliateLinksForChannel(html, config, 'medium');
+  assert.ok(rewritten.includes('href="https://ex1.com/go-m"'));
+  assert.ok(rewritten.includes('href="https://ex1.com/other"'));
+});
+
+test('rewriteAffiliateLinksForChannel handles a default URL that is a prefix of another entry\'s already-rewritten channel URL', () => {
+  // channelUrlPrefix: short's default 'https://ex2.com/go' is a prefix of
+  // long's *channel* URL 'https://ex2.com/go?x=2', not of long's default -
+  // a sequential split/join pass (even sorted longest-default-first) would
+  // rewrite long correctly, then have short's later pass corrupt that output.
+  const html =
+    '<a href="https://ex2.com/go">Short</a><a href="https://ex2.com/go?x=1">Long</a>';
+  const rewritten = rewriteAffiliateLinksForChannel(html, config, 'medium');
+  assert.ok(rewritten.includes('href="https://ex2.com/go-m"'));
+  assert.ok(rewritten.includes('href="https://ex2.com/go?x=2"'));
 });

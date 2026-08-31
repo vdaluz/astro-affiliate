@@ -7,6 +7,7 @@ All notable changes to this project are documented here. Format loosely follows 
 ### Fixed
 
 - `remarkAffiliate` ignored reference-style links (`[text][ref]` + a `[ref]: affiliate:key` definition) - the plugin found no `link` nodes to rewrite, so the raw `affiliate:key` URL shipped to the page and the used-⊆-declared compliance check never saw it, with no build error. Reference-style `affiliate:` links now resolve correctly, and any node type the plugin still can't handle (e.g. an image) now fails the build instead of shipping a broken href.
+- `rewriteAffiliateLinksForChannel` corrupted its own output whenever one catalog entry's default URL was a prefix of another entry's default or channel URL - each entry ran as a separate `split/join` pass, so a shorter entry's later pass could rewrite the inside of an already-rewritten (or not-yet-processed) longer URL, leaving neither the default nor the intended channel URL. Now a single regex pass (longest URL first, so alternation can't award the match to a shorter prefix) replaces every entry at once, so no pass can re-scan or corrupt another pass's output.
 
 ## [1.0.0] - 2026-08-22
 
