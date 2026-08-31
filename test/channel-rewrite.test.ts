@@ -100,7 +100,7 @@ test('rewriteAffiliateLinksForChannel leaves content unchanged for a channel wit
   assert.equal(rewriteAffiliateLinksForChannel(html, config, 'linkedin'), html);
 });
 
-test('rewriteAffiliateLinksForChannel handles a default URL that is a prefix of another entry\'s default URL (AST-47)', () => {
+test('rewriteAffiliateLinksForChannel handles a default URL that is a prefix of another entry\'s default URL', () => {
   const html =
     '<a href="https://ex1.com/go">Short</a><a href="https://ex1.com/go?x=1">Long</a>';
   const rewritten = rewriteAffiliateLinksForChannel(html, config, 'medium');
