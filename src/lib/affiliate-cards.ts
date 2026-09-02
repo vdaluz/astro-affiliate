@@ -21,9 +21,8 @@ export interface ResolveAffiliateCardsInput {
   postSlug: string;
   /** Display data for every catalog key eligible to appear as a card, keyed
    * by the same catalog key used in the consumer's affiliate.ts. Required,
-   * not defaulted - this package stays data-free by design (see AST-36's
-   * cancellation for why a shared package should never bake in a consumer's
-   * own catalog/display data). */
+   * not defaulted - this package stays data-free by design, since a shared
+   * package should never bake in a consumer's own catalog/display data. */
   display: Record<string, AffiliateCardDisplay>;
   /** Always-eligible last-resort fill tier, as catalog keys into `display`. */
   generic: string[];
