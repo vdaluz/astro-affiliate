@@ -149,9 +149,10 @@ fails with a clear error - there's no way to ship an affiliate link without its 
 The plugin also writes the post's own catalog keys, in document order with duplicates removed,
 to `affiliateKeys` in the page's frontmatter - useful for a consumer that wants to know "which
 catalog items did this post actually link to" without re-parsing markdown (e.g. to seed a
-related-products widget from a post's own links before falling back to other sources). It's
-`undefined`, not an empty array, on a post with no affiliate links - read it as
-`affiliateKeys ?? []`. Access it via Astro's `remarkPluginFrontmatter`:
+related-products widget from a post's own links before falling back to other sources - see
+[Affiliate cards](#affiliate-cards-resolveaffiliatecards) for a ready-made resolver that does
+exactly this). It's `undefined`, not an empty array, on a post with no affiliate links - read it
+as `affiliateKeys ?? []`. Access it via Astro's `remarkPluginFrontmatter`:
 
 ```astro
 ---
@@ -249,6 +250,55 @@ name isn't a program declared in `config.programs` - the same guarantee `<Affili
 relies on internally, so a plain-text consumer can't silently drop a disclosure for a typo'd
 program name.
 
+## Affiliate cards (`resolveAffiliateCards`)
+
+A related-affiliate-products widget for the end of a post. `resolveAffiliateCards` is a plain
+data function - the package ships no rendering component for it, so each consuming app owns its
+own card display component (see [Per-app glue](#per-app-glue)):
+
+```astro
+---
+import { resolveAffiliateCards } from '@vdaluz/astro-affiliate';
+import { getAffiliateCardDisplay, getGenericKeys } from '../config/affiliate-cards';
+import AffiliateCards from '../components/AffiliateCards.astro';
+
+const { remarkPluginFrontmatter } = await render(entry);
+const affiliateCardEntries = resolveAffiliateCards({
+  postKeys: remarkPluginFrontmatter.affiliateKeys ?? [],
+  postCategory: entry.data.category,
+  postSlug: stripLocalePrefix(entry.id),
+  display: getAffiliateCardDisplay(locale),
+  generic: getGenericKeys(entry.data.category),
+});
+---
+
+<AffiliateCards entries={affiliateCardEntries} />
+```
+
+Resolves up to 3 entries per post, in priority order:
+
+1. The post's own `affiliate:` links (from `affiliateKeys`, see [Markdown
+   links](#markdown-links-remarkaffiliate)), in document order - never randomized, since these
+   are real editorial choices.
+2. Category-matched entries from `display` (matched on `postCategories`), shuffled with a PRNG
+   seeded from `postSlug`, filling every remaining slot except the last one.
+3. The last remaining slot: leftover category matches from (2) plus the `generic` always-eligible
+   defaults, pooled together and shuffled with the same seeded PRNG. This applies even when the
+   category pool alone could have filled every remaining slot - a category with several matches
+   can still yield a generic default in the mix, by design.
+
+Deduplicates by key across all three tiers, so a post inlining a key that's also a category match
+or generic default only shows it once.
+
+`postSlug` seeds the shuffle deterministically - the same post always resolves to the same card
+set across rebuilds, so it must be **locale-independent** (strip any locale prefix, e.g.
+`stripLocalePrefix(entry.id)`) or the same post's translations will land on different combinations
+instead of sharing one.
+
+`display` (a `Record<string, AffiliateCardDisplay>` keyed by catalog key) and `generic` (an array
+of always-eligible catalog keys) are both required, not defaulted - the package stays data-free by
+design, since a shared package should never bake in a consumer's own catalog/display data.
+
 ## Per-app glue
 
 This is a component library, not a drop-in catalog. Each consuming app owns:
@@ -259,6 +309,8 @@ This is a component library, not a drop-in catalog. Each consuming app owns:
 - Token CSS variables referenced by the default disclosure styling: `muted`. See
   [`@vdaluz/astro-blog`'s `tokens.example.css`](https://github.com/vdaluz/astro-blog) for the
   full token set these sites already share.
+- Its own card display map and rendering component for [Affiliate
+  cards](#affiliate-cards-resolveaffiliatecards) - `resolveAffiliateCards` returns data only.
 
 ## Contributing
 

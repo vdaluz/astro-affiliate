@@ -8,6 +8,10 @@ All notable changes to this project are documented here. Format loosely follows 
 
 - Export `resolveDisclosures` and the `Localized` type from the package entry, so consumers that need disclosure text outside an `.astro` page (RSS items, channel-export pipelines, plain-text newsletters) can call it directly instead of reimplementing the lookup.
 
+### Documentation
+
+- Documented `resolveAffiliateCards` in the README (three-tier fill algorithm, `MAX_CARDS`, deterministic `postSlug` seeding, the `affiliateKeys` handoff from `remarkAffiliate`) - exported and tested since 0.8.0, but never mentioned in the README.
+
 ### Fixed
 
 - `remarkAffiliate` ignored reference-style links (`[text][ref]` + a `[ref]: affiliate:key` definition) - the plugin found no `link` nodes to rewrite, so the raw `affiliate:key` URL shipped to the page and the used-⊆-declared compliance check never saw it, with no build error. Reference-style `affiliate:` links now resolve correctly, and any node type the plugin still can't handle (e.g. an image) now fails the build instead of shipping a broken href.
@@ -32,6 +36,12 @@ All notable changes to this project are documented here. Format loosely follows 
 ### Documentation
 
 - Added npm version and license badges. Standardized the README's tail-section order and added a License section.
+
+## [0.8.0] - 2026-08-12
+
+### Added
+
+- `resolveAffiliateCards`, a deterministic card-fill resolver for related-affiliate widgets: fills up to 3 slots per post from the post's own inline links, then category-matched catalog entries, then generic defaults, seeded per `postSlug` so the same post shows the same cards on every rebuild and across locales. Exports `AffiliateCardDisplay`, `AffiliateCardEntry`, and `ResolveAffiliateCardsInput`.
 
 ## [0.7.0] - 2026-08-09
 
