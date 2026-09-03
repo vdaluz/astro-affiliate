@@ -208,7 +208,8 @@ see [Per-app glue](#per-app-glue) for the token variables this assumes.
 
 ### Localized disclosure text
 
-A program's `disclosure` accepts either a plain string or a `Localized` value - `{ default: string, [locale]: string }` - for sites publishing in more than one language:
+A program's `disclosure` accepts either a plain string or a `Localized` value (import it as a
+type: `import type { Localized } from '@vdaluz/astro-affiliate'`) - `{ default: string, [locale]: string }` - for sites publishing in more than one language:
 
 ```ts
 programs: {
