@@ -10,7 +10,7 @@ All notable changes to this project are documented here. Format loosely follows 
 
 ### Documentation
 
-- Documented `resolveAffiliateCards` in the README (three-tier fill algorithm, `MAX_CARDS`, deterministic `postSlug` seeding, the `affiliateKeys` handoff from `remarkAffiliate`) - exported and tested since 0.8.0, but never mentioned in the README.
+- Documented `resolveAffiliateCards` in the README (three-tier fill algorithm, the 3-card cap, deterministic `postSlug` seeding, the `affiliateKeys` handoff from `remarkAffiliate`) - exported and tested since 0.8.0, but never mentioned in the README.
 
 ### Fixed
 
