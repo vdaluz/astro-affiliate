@@ -229,6 +229,25 @@ Pass `locale` to `<AffiliateDisclosure>` to select the matching entry; it falls 
 <AffiliateDisclosure config={affiliate} affiliates={affiliates} locale={locale} />
 ```
 
+### Disclosure text outside `.astro` (RSS, exports, plain text)
+
+`<AffiliateDisclosure>` only works inside an `.astro` page. For anything that needs the same
+disclosure text as plain strings - an RSS item description, a channel-export pipeline, a
+plain-text newsletter - call `resolveDisclosures` directly:
+
+```ts
+import { resolveDisclosures } from '@vdaluz/astro-affiliate';
+import { affiliate } from '../config/affiliate';
+
+const disclosures = resolveDisclosures(affiliate, entry.data.affiliates ?? [], locale);
+```
+
+It returns the resolved text for each program name in order (see [Localized disclosure
+text](#localized-disclosure-text) for how `locale` selects between entries), and throws if any
+name isn't a program declared in `config.programs` - the same guarantee `<AffiliateDisclosure>`
+relies on internally, so a plain-text consumer can't silently drop a disclosure for a typo'd
+program name.
+
 ## Per-app glue
 
 This is a component library, not a drop-in catalog. Each consuming app owns:

@@ -4,6 +4,10 @@ All notable changes to this project are documented here. Format loosely follows 
 
 ## [Unreleased]
 
+### Added
+
+- Export `resolveDisclosures` and the `Localized` type from the package entry, so consumers that need disclosure text outside an `.astro` page (RSS items, channel-export pipelines, plain-text newsletters) can call it directly instead of reimplementing the lookup.
+
 ### Fixed
 
 - `remarkAffiliate` ignored reference-style links (`[text][ref]` + a `[ref]: affiliate:key` definition) - the plugin found no `link` nodes to rewrite, so the raw `affiliate:key` URL shipped to the page and the used-⊆-declared compliance check never saw it, with no build error. Reference-style `affiliate:` links now resolve correctly, and any node type the plugin still can't handle (e.g. an image) now fails the build instead of shipping a broken href.
