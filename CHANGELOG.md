@@ -4,6 +4,8 @@ All notable changes to this project are documented here. Format loosely follows 
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-04
+
 ### Added
 
 - Export `resolveDisclosures` and the `Localized` type from the package entry, so consumers that need disclosure text outside an `.astro` page (RSS items, channel-export pipelines, plain-text newsletters) can call it directly instead of reimplementing the lookup.
