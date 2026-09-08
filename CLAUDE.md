@@ -1,7 +1,5 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code when working in this repository.
-
 ## What this repo is
 
 `@vdaluz/astro-affiliate`: shared affiliate-link catalog resolver and disclosure components for vdaluz.com-family sites. Machinery only - the package carries no affiliate data itself; each site supplies its own catalog, tracking tags, and disclosure text via config. Consumed by vdaluz.com, imperfectsystems.com, freetoolbox.net, and vicstradamus.com (`src/pages/releases/[slug].astro`) as an npm-registry semver pin.
