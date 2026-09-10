@@ -225,7 +225,7 @@ programs: {
 },
 ```
 
-Pass `locale` to `<AffiliateDisclosure>` to select the matching entry; it falls back to `default` when the given locale has no entry, or when `disclosure` is a plain string:
+Pass `locale` to `<AffiliateDisclosure>` to select the matching entry - a region-qualified locale like `pt-BR` matches a `pt` entry via its primary subtag if there's no exact `pt-BR` entry. It falls back to `default` when neither the exact locale nor its subtag has an entry, or when `disclosure` is a plain string:
 
 ```astro
 <AffiliateDisclosure config={affiliate} affiliates={affiliates} locale={locale} />
