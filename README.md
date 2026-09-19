@@ -204,7 +204,8 @@ const { affiliates = [] } = entry.data;
 ```
 
 Renders one paragraph joining the disclosure text for every program in `affiliates`, or nothing
-if the array is empty. Default styling is `text-sm text-muted italic`; pass `class` to override,
+if the array is empty. A program named more than once (for example, one entry per card in a
+card list) is disclosed once. Default styling is `text-sm text-muted italic`; pass `class` to override,
 see [Per-app glue](#per-app-glue) for the token variables this assumes.
 
 ### Localized disclosure text
@@ -244,7 +245,8 @@ import { affiliate } from '../config/affiliate';
 const disclosures = resolveDisclosures(affiliate, entry.data.affiliates ?? [], locale);
 ```
 
-It returns the resolved text for each program name in order (see [Localized disclosure
+It returns the resolved text for each distinct program name, in first-seen order - a name passed
+more than once appears once (see [Localized disclosure
 text](#localized-disclosure-text) for how `locale` selects between entries), and throws if any
 name isn't a program declared in `config.programs` - the same guarantee `<AffiliateDisclosure>`
 relies on internally, so a plain-text consumer can't silently drop a disclosure for a typo'd

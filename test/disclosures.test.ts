@@ -24,6 +24,18 @@ test('resolves known program names to their disclosure text, in order', () => {
   assert.deepEqual(disclosures, ['default disclosure', 'default proton disclosure']);
 });
 
+test('collapses repeated program names to one entry, keeping first-seen order', () => {
+  const disclosures = resolveDisclosures(config, ['amazon', 'proton', 'amazon', 'amazon']);
+  assert.deepEqual(disclosures, ['default disclosure', 'default proton disclosure']);
+});
+
+test('still throws on a repeated unknown program name', () => {
+  assert.throws(
+    () => resolveDisclosures(config, ['typo-program', 'typo-program']),
+    /Unknown affiliate program "typo-program"/
+  );
+});
+
 test('resolves localized disclosure text when a locale is given', () => {
   const disclosures = resolveDisclosures(config, ['proton'], 'es');
   assert.deepEqual(disclosures, ['divulgacion de proton']);
