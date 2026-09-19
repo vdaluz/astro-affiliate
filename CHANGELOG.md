@@ -4,6 +4,12 @@ All notable changes to this project are documented here. Format loosely follows 
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-09-19
+
+### Fixed
+
+- `resolveDisclosures()` (and so `<AffiliateDisclosure>`) repeated a program's disclosure once per occurrence in `affiliates`, so a consumer passing one entry per card in a card list rendered the same sentence several times. Repeated program names now collapse to one entry, in first-seen order. An unknown program name still throws.
+
 ## [1.1.1] - 2026-09-10
 
 ### Fixed
