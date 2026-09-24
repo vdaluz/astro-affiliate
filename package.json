@@ -37,10 +37,17 @@
     "./AffiliateDisclosure.astro": "./src/components/AffiliateDisclosure.astro"
   },
   "peerDependencies": {
+    "@astrojs/markdown-remark": ">=7.0.0",
     "astro": ">=6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@astrojs/markdown-remark": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@astrojs/markdown-remark": "^7.3.1",
     "@types/node": "^26.1.1",
     "astro": "^7.3.2",
     "typescript": "^6.0.3"

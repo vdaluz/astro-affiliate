@@ -4,6 +4,18 @@ All notable changes to this project are documented here. Format loosely follows 
 
 ## [Unreleased]
 
+### Added
+
+- `@astrojs/markdown-remark` (`>=7.0.0`) is declared as an optional peer dependency. `remarkAffiliate` runs on its pipeline, and Astro 7 no longer installs it by default. Components-only consumers can ignore it.
+
+### Changed
+
+- `remarkAffiliate` passed pre-invoked (`remarkAffiliate(config)` instead of the `[remarkAffiliate, config]` tuple) now fails the build with `remarkAffiliate was passed pre-invoked`, instead of an opaque `Cannot read properties of undefined (reading 'type')`. The README had described this mistake as a silent no-op, which isn't what current unified does.
+
+### Documentation
+
+- README's Markdown links section now installs `@astrojs/markdown-remark` and wires the plugin through `markdown.processor: unified({ remarkPlugins })` for Astro 6.4+ and 7. Following the previous `markdown.remarkPlugins` wiring on Astro 7 stopped the build at config load, and on 6.4+ it logs a deprecation warning. The legacy form stays documented for Astro 6.0 to 6.3.
+
 ## [1.1.2] - 2026-09-19
 
 ### Fixed

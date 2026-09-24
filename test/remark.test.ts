@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { createMarkdownProcessor } from '@astrojs/markdown-remark';
 import { remarkAffiliate } from '../src/lib/remark.ts';
 import type { AffiliateConfig } from '../src/lib/types.ts';
 
@@ -111,4 +112,20 @@ test('writes affiliateKeys in document order with duplicates removed', () => {
   remarkAffiliate(config)(tree, file);
 
   assert.deepEqual(file.data.astro.frontmatter.affiliateKeys, ['atomicHabits', 'protonPass']);
+});
+
+const AFFILIATE_POST = 'Read [Atomic Habits](affiliate:atomicHabits).';
+
+test('resolves links when wired as a [plugin, options] tuple through the real Markdown processor', async () => {
+  const processor = await createMarkdownProcessor({ remarkPlugins: [[remarkAffiliate, config]] });
+  const { code } = await processor.render(AFFILIATE_POST, { frontmatter: { affiliates: ['amazon'] } });
+  assert.match(code, /href="https:\/\/www\.amazon\.com\/dp\/B07RFSSYBH\/ref=nosim\?tag=vdaluz-20"/);
+});
+
+test('fails with a clear error when the plugin is passed pre-invoked instead of as a tuple', async () => {
+  const processor = await createMarkdownProcessor({ remarkPlugins: [remarkAffiliate(config)] });
+  await assert.rejects(
+    processor.render(AFFILIATE_POST, { frontmatter: { affiliates: ['amazon'] } }),
+    /passed pre-invoked/
+  );
 });

@@ -110,25 +110,44 @@ Two ways to consume a channel, depending on where the affiliate link lives:
 
 ## Markdown links (`remarkAffiliate`)
 
-Wire the plugin into `astro.config.mjs`:
+The plugin runs on the remark/rehype pipeline from `@astrojs/markdown-remark`. Astro 7 no longer
+installs it by default (its default Markdown processor is Sätteri), so install it alongside this
+package:
+
+```sh
+npm install @astrojs/markdown-remark
+```
+
+On Astro 6.4 and later, including Astro 7, pass the plugin to the `unified()` processor in
+`astro.config.mjs`:
 
 ```js
+import { unified } from '@astrojs/markdown-remark';
 import { remarkAffiliate } from '@vdaluz/astro-affiliate/remark';
 import { affiliate } from './src/config/affiliate';
 
 export default defineConfig({
   markdown: {
-    remarkPlugins: [[remarkAffiliate, affiliate]],
+    processor: unified({
+      remarkPlugins: [[remarkAffiliate, affiliate]],
+    }),
   },
 });
 ```
 
-> **Use the `[plugin, options]` tuple, not `remarkAffiliate(affiliate)` pre-invoked.** Astro/unified
-> calls the plugin function itself with the options; passing an already-invoked transformer means
-> unified calls *that* with no arguments as if it were the attacher, which silently no-ops instead
-> of rewriting anything - the build stays green with `affiliate:key` links left untouched in the
-> output. Always verify by checking rendered HTML for the real resolved URL, not just a passing
-> build.
+On Astro 6.0 to 6.3, which predate `markdown.processor` and bundle `@astrojs/markdown-remark`
+themselves, use the top-level option instead: `markdown: { remarkPlugins: [[remarkAffiliate, affiliate]] }`.
+Astro 6.4+ still accepts that form but deprecates it, and Astro 7 fails at config load with it
+unless `@astrojs/markdown-remark` is installed.
+
+> **Use the `[plugin, options]` tuple, not `remarkAffiliate(affiliate)` pre-invoked.** unified
+> calls the plugin function itself with the options. Passing an already-invoked transformer means
+> unified calls *that* as the plugin, with no document, and the build fails with
+> `remarkAffiliate was passed pre-invoked`. Always verify by checking rendered HTML for the real
+> resolved URL, not just a passing build.
+
+Components-only consumers (`<AffiliateLink>`, `<AffiliateDisclosure>`) don't need
+`@astrojs/markdown-remark`; it's an optional peer dependency.
 
 Then in a post's markdown body:
 

@@ -68,14 +68,21 @@ function assertNoRemainingAffiliateUrls(node: MdastNode) {
  * For a reference-style link (`[text][ref]`), "document order" follows the
  * position of the `[ref]: affiliate:key` definition, not the in-prose usage.
  *
+ *   import { unified } from '@astrojs/markdown-remark';
  *   import { remarkAffiliate } from '@vdaluz/astro-affiliate/remark';
  *
  *   export default defineConfig({
- *     markdown: { remarkPlugins: [[remarkAffiliate, affiliate]] },
+ *     markdown: { processor: unified({ remarkPlugins: [[remarkAffiliate, affiliate]] }) },
  *   });
  */
 export function remarkAffiliate(config: AffiliateConfig) {
   return (tree: MdastNode, file: VFileWithAstroFrontmatter) => {
+    // unified calls a pre-invoked remarkAffiliate(config) as the plugin attacher, with no tree.
+    if (!tree) {
+      throw new Error(
+        'remarkAffiliate was passed pre-invoked. Pass it as a [remarkAffiliate, config] tuple instead.'
+      );
+    }
     const linkNodes: MdastNode[] = [];
     collectAffiliateLinkNodes(tree, linkNodes);
 
