@@ -75,3 +75,59 @@ test('resolves an amazon catalog key against a configured marketplace domain', (
   const { url } = resolveAffiliate(brConfig, 'atomicHabitsBr');
   assert.equal(url, 'https://www.amazon.com.br/dp/B07RFSSYBH/ref=nosim?tag=vdaluz-br-20');
 });
+
+test('throws when a catalog entry references an unknown program', () => {
+  const broken: AffiliateConfig = {
+    programs: config.programs,
+    catalog: { orphan: { program: 'missing', asin: 'B07RFSSYBH' } },
+  };
+  assert.throws(() => resolveAffiliate(broken, 'orphan'), /references unknown program "missing"/);
+});
+
+test('throws when an asin entry points at a links program', () => {
+  const broken: AffiliateConfig = {
+    programs: config.programs,
+    catalog: { mismatched: { program: 'proton', asin: 'B07RFSSYBH' } },
+  };
+  assert.throws(() => resolveAffiliate(broken, 'mismatched'), /is kind "links", not "amazon"/);
+});
+
+test('throws when a link entry points at an amazon program', () => {
+  const broken: AffiliateConfig = {
+    programs: config.programs,
+    catalog: { mismatched: { program: 'amazon', link: 'pass' } },
+  };
+  assert.throws(() => resolveAffiliate(broken, 'mismatched'), /is kind "amazon", not "links"/);
+});
+
+test('throws when a link entry names a key missing from the program links', () => {
+  const broken: AffiliateConfig = {
+    programs: config.programs,
+    catalog: { missingLink: { program: 'proton', link: 'vpn' } },
+  };
+  assert.throws(() => resolveAffiliate(broken, 'missingLink'), /references unknown link "vpn"/);
+});
+
+test('throws when a catalog entry has neither asin nor link', () => {
+  const broken: AffiliateConfig = {
+    programs: config.programs,
+    catalog: { empty: { program: 'amazon' } as unknown as AffiliateConfig['catalog'][string] },
+  };
+  assert.throws(() => resolveAffiliate(broken, 'empty'), /has neither "asin" nor "link"/);
+});
+
+test('falls back to the default link when the channel map exists but lacks this link key', () => {
+  const partial: AffiliateConfig = {
+    programs: {
+      proton: {
+        kind: 'links',
+        disclosure: 'proton disclosure',
+        links: { pass: 'https://go.getproton.me/SH2FI' },
+        channelLinks: { medium: { other: 'https://go.getproton.me/OTHER' } },
+      },
+    },
+    catalog: { protonPass: { program: 'proton', link: 'pass' } },
+  };
+  const { url } = resolveAffiliate(partial, 'protonPass', 'medium');
+  assert.equal(url, 'https://go.getproton.me/SH2FI');
+});
