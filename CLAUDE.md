@@ -2,7 +2,7 @@
 
 ## What this repo is
 
-`@vdaluz/astro-affiliate`: shared affiliate-link catalog resolver and disclosure components for vdaluz.com-family sites. Machinery only - the package carries no affiliate data itself; each site supplies its own catalog, tracking tags, and disclosure text via config. Consumed by vdaluz.com, imperfectsystems.com, freetoolbox.net, and vicstradamus.com (`src/pages/releases/[slug].astro`) as an npm-registry semver pin.
+`@vdaluz/astro-affiliate`: shared affiliate-link catalog resolver and disclosure components for vdaluz.com-family sites. Machinery only - the package carries no affiliate data itself; each site supplies its own catalog, tracking tags, and disclosure text via config. Consumed as an npm-registry semver pin by the sites in the README's Consumers section.
 
 ## Workflow
 
@@ -29,7 +29,4 @@ concrete steps.
 
 ## Consumers
 
-- [vdaluz.com](https://vdaluz.com)
-- [imperfectsystems.com](https://imperfectsystems.com)
-- [freetoolbox.net](https://freetoolbox.net)
-- [vicstradamus.com](https://vicstradamus.com)
+The README's Consumers section is the single list. Update it when a repo adds or drops its `@vdaluz/astro-affiliate` dependency (`grep -l '"@vdaluz/astro-affiliate"' ~/Repos/*/package.json`).
