@@ -4,6 +4,8 @@ All notable changes to this project are documented here. Format loosely follows 
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-24
+
 ### Added
 
 - `@astrojs/markdown-remark` (`>=7.0.0`) is declared as an optional peer dependency. `remarkAffiliate` runs on its pipeline, and Astro 7 no longer installs it by default. Components-only consumers can ignore it.
