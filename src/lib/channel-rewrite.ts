@@ -42,10 +42,13 @@ function escapeRegExp(value: string): string {
  * alternative), not a generic regex over "tag=" or similar - safe against
  * matching unrelated content.
  *
- * A single regex pass, not one split/join per entry: sequential passes
- * re-scan each other's output, so a shorter default URL that happens to be a
- * prefix of another entry's default OR channel URL would corrupt an already-
- * rewritten result on a later pass. One pass never re-scans a replacement.
+ * A single regex pass, not one split/join per entry. Sequential passes break
+ * when a shorter default URL is a prefix of a longer entry's default: run
+ * first, the shorter pass corrupts the longer URL before its own pass sees
+ * it. Sorting longest-first fixes that but not the case where the longer
+ * entry's channel URL also starts with the shorter default, since the
+ * shorter pass then corrupts the already-rewritten result. One pass never
+ * re-scans a replacement.
  * Alternatives are ordered longest-first because regex alternation is
  * first-match-wins at a given position, not longest-match-wins - without the
  * ordering a shorter prefix could still win the match before the longer

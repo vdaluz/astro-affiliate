@@ -109,10 +109,11 @@ test('rewriteAffiliateLinksForChannel handles a default URL that is a prefix of 
 });
 
 test('rewriteAffiliateLinksForChannel handles a default URL that is a prefix of another entry\'s already-rewritten channel URL', () => {
-  // channelUrlPrefix: short's default 'https://ex2.com/go' is a prefix of
-  // long's *channel* URL 'https://ex2.com/go?x=2', not of long's default -
-  // a sequential split/join pass (even sorted longest-default-first) would
-  // rewrite long correctly, then have short's later pass corrupt that output.
+  // channelUrlPrefix: as in the test above, short's default 'https://ex2.com/go'
+  // is a prefix of long's default. What differs is that long's *channel* URL
+  // 'https://ex2.com/go?x=2' still starts with short's default, so a sequential
+  // split/join pass sorted longest-default-first would rewrite long correctly,
+  // then have short's later pass corrupt that output.
   const html =
     '<a href="https://ex2.com/go">Short</a><a href="https://ex2.com/go?x=1">Long</a>';
   const rewritten = rewriteAffiliateLinksForChannel(html, config, 'medium');
