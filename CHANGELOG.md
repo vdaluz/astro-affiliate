@@ -4,6 +4,12 @@ All notable changes to this project are documented here. Format loosely follows 
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-11-12
+
+### Changed
+
+- Adds the `utils` keyword so the package is listed under Utilities in the Astro integrations library instead of Uncategorized. No code changes.
+
 ## [1.2.0] - 2026-09-24
 
 ### Added
